@@ -1145,6 +1145,322 @@ details[open] .essence-summary::before { content: '\u2212 '; }
   flex-shrink: 0; transition: color var(--t-fast) var(--ease);
 }
 .install-dismiss:hover { color: var(--text); }
+
+/* ═══════════════════════════════════════════════════
+   MANDALA
+═══════════════════════════════════════════════════ */
+.mandala-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 24px 0 12px;
+}
+.mandala-svg {
+  width: 220px; height: 220px;
+  overflow: visible;
+}
+.mandala-ring-outer { fill: none; stroke: rgba(201,168,76,.10); stroke-width: 1; }
+.mandala-ring-inner { fill: none; stroke: rgba(201,168,76,.06); stroke-width: 1; }
+.mandala-spoke { stroke: rgba(201,168,76,.06); stroke-width: 1; }
+.mandala-node { cursor: default; }
+.mandala-node-circle {
+  transition: r 200ms ease, opacity 200ms ease;
+}
+.mandala-node:hover .mandala-node-circle { opacity: 1; }
+.mandala-center-ring { fill: rgba(201,168,76,.12); stroke: rgba(201,168,76,.35); stroke-width: 1.5; }
+.mandala-center-num {
+  font-family: 'PT Serif', serif;
+  font-size: 22px;
+  font-weight: 400;
+  fill: var(--gold);
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.mandala-center-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 6px;
+  fill: var(--muted);
+  text-anchor: middle;
+  dominant-baseline: central;
+  letter-spacing: 0.08em;
+}
+.mandala-outer-num {
+  font-family: 'PT Serif', serif;
+  font-size: 13px;
+  font-weight: 400;
+  fill: var(--gold-dim);
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.mandala-outer-num.is-master { fill: var(--gold); }
+.mandala-outer-num.is-karmic { fill: #b52b0a; }
+.mandala-outer-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 5.5px;
+  fill: var(--dim);
+  text-anchor: middle;
+  dominant-baseline: central;
+  letter-spacing: 0.06em;
+}
+.mandala-legend {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .58rem; color: var(--dim);
+  letter-spacing: .06em;
+}
+.mandala-legend-item { display: flex; align-items: center; gap: 5px; }
+.mandala-legend-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+/* ═══════════════════════════════════════════════════
+   TIMELINE CICLOS
+═══════════════════════════════════════════════════ */
+.cycles-timeline {
+  background: var(--panel);
+  border: 1px solid var(--bg-gold);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.cycle-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--bg-gold);
+  position: relative;
+}
+.cycle-row:last-child { border-bottom: none; }
+.cycle-row.current-cycle { background: rgba(201,168,76,.04); }
+.cycle-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .60rem; color: var(--muted);
+  letter-spacing: .10em; width: 28px; flex-shrink: 0;
+}
+.cycle-num {
+  font-family: 'PT Serif', serif;
+  font-size: 1.4rem; color: var(--gold-dim);
+  width: 30px; flex-shrink: 0; text-align: center;
+  line-height: 1;
+}
+.cycle-num.is-master { color: var(--gold); }
+.cycle-bar-track {
+  flex: 1; height: 6px; background: var(--bg-gold);
+  border-radius: 3px; overflow: hidden; position: relative;
+}
+.cycle-bar-fill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+  transition: width .8s cubic-bezier(.25,.1,.25,1);
+}
+.cycle-bar-fill.current { background: linear-gradient(90deg, var(--gold), var(--gold2)); }
+.cycle-ages {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .58rem; color: var(--dim);
+  letter-spacing: .04em; white-space: nowrap; flex-shrink: 0;
+}
+.cycle-current-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .50rem; color: var(--gold);
+  background: rgba(201,168,76,.12);
+  border: 1px solid rgba(201,168,76,.25);
+  border-radius: 10px; padding: 1px 6px;
+  letter-spacing: .08em; flex-shrink: 0;
+}
+.cycle-age-marker {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .52rem; color: var(--gold);
+  position: absolute; top: -18px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════
+   PINNACLES CHART
+═══════════════════════════════════════════════════ */
+.pinnacles-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 20px 16px 0;
+  background: var(--panel);
+  border: 1px solid var(--bg-gold);
+  border-radius: var(--r-lg);
+  margin-bottom: 20px;
+  height: 160px;
+  position: relative;
+}
+.pinnacles-chart::after {
+  content: '';
+  position: absolute; bottom: 48px; left: 16px; right: 16px;
+  height: 1px; background: var(--bg-gold);
+}
+.pinnacle-bar-wrap {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  height: 100%;
+  padding-bottom: 48px;
+}
+.pinnacle-bar {
+  width: 100%; border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, var(--gold), var(--gold-dim));
+  transition: height .8s cubic-bezier(.25,.1,.25,1);
+  position: relative; min-height: 4px;
+}
+.pinnacle-bar.current-pin {
+  background: linear-gradient(180deg, var(--gold2), var(--gold));
+  box-shadow: 0 0 12px rgba(201,168,76,.2);
+}
+.pinnacle-bar.is-master { background: linear-gradient(180deg, var(--gold2), var(--gold)); }
+.pinnacle-bar-num {
+  font-family: 'PT Serif', serif;
+  font-size: .9rem; color: var(--gold);
+  position: absolute; top: -22px; left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.pinnacle-bar-num.is-master { color: var(--gold2); }
+.pinnacle-footer {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  display: flex; gap: 8px;
+  padding: 0 16px 12px;
+}
+.pinnacle-footer-item {
+  flex: 1; text-align: center;
+}
+.pinnacle-footer-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .54rem; color: var(--muted);
+  letter-spacing: .08em;
+  display: block;
+}
+.pinnacle-footer-ages {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .50rem; color: var(--dim);
+  letter-spacing: .04em;
+  display: block; margin-top: 1px;
+}
+.pinnacle-current-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .48rem; color: var(--gold);
+  display: block; margin-top: 1px;
+}
+
+/* ═══════════════════════════════════════════════════
+   RADAR CHART (Elementos)
+═══════════════════════════════════════════════════ */
+.radar-wrap {
+  display: flex; align-items: center; gap: 20px;
+  background: var(--panel);
+  border: 1px solid var(--bg-gold);
+  border-radius: var(--r-lg);
+  padding: 20px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.radar-svg { flex-shrink: 0; }
+.radar-legend {
+  flex: 1; min-width: 120px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.radar-legend-item {
+  display: flex; align-items: center; gap: 8px;
+}
+.radar-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.radar-legend-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem; color: var(--muted);
+  letter-spacing: .06em; flex: 1;
+}
+.radar-legend-count {
+  font-family: 'PT Serif', serif;
+  font-size: 1rem; color: var(--gold-dim);
+  line-height: 1;
+}
+.radar-legend-item.dominant .radar-legend-count { color: var(--gold); }
+
+/* ═══════════════════════════════════════════════════
+   UX: INPUT HIGHLIGHTS & KEYBOARD HINT
+═══════════════════════════════════════════════════ */
+.input-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .54rem; color: var(--dim);
+  letter-spacing: .06em;
+  text-align: center;
+  margin-top: 8px;
+}
+.input-hint kbd {
+  background: var(--panel2);
+  border: 1px solid rgba(201,168,76,.2);
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-family: inherit;
+  font-size: inherit;
+}
+.field input:not(:placeholder-shown) {
+  border-color: rgba(201,168,76,.25);
+}
+.calc-btn-loading {
+  opacity: .6; cursor: wait; pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════
+   NUMBER SUMMARY STRIP (topo dos resultados)
+═══════════════════════════════════════════════════ */
+.num-strip {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.num-strip-item {
+  background: var(--panel);
+  border: 1px solid var(--bg-gold);
+  border-radius: var(--r);
+  padding: 6px 10px;
+  display: flex; align-items: center; gap: 6px;
+  transition: background var(--t-fast) var(--ease);
+}
+.num-strip-item:hover { background: var(--panel2); }
+.num-strip-item.is-master { border-color: rgba(201,168,76,.4); }
+.num-strip-item.is-karmic { border-color: rgba(181,43,10,.3); }
+.num-strip-n {
+  font-family: 'PT Serif', serif;
+  font-size: 1.1rem; color: var(--gold-dim); line-height: 1;
+}
+.num-strip-item.is-master .num-strip-n { color: var(--gold); }
+.num-strip-item.is-karmic .num-strip-n { color: #b52b0a; }
+.num-strip-lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .52rem; color: var(--dim);
+  letter-spacing: .06em; line-height: 1.3;
+}
+
+/* ═══════════════════════════════════════════════════
+   PROJECTION CHART (mini sparkline)
+═══════════════════════════════════════════════════ */
+.projection-svg-wrap {
+  background: var(--panel);
+  border: 1px solid var(--bg-gold);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.projection-svg-title {
+  padding: 10px 16px; border-bottom: 1px solid var(--bg-gold);
+  font-family: 'JetBrains Mono', monospace; font-size: .60rem;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+}
+.projection-chart-area {
+  padding: 12px 16px 8px;
+}
+
+@media (max-width: 480px) {
+  .mandala-svg { width: 180px; height: 180px; }
+  .pinnacles-chart { height: 140px; }
+  .radar-wrap { flex-direction: column; }
+}
 </style>
 </head>
 <body>
@@ -1197,6 +1513,7 @@ details[open] .essence-summary::before { content: '\u2212 '; }
       <div class="date-error" id="dateError"></div>
     </div>
     <button class="calc-btn" id="calcBtn" onclick="calculate()">CALCULAR MEU MAPA</button>
+    <div class="input-hint">pressione <kbd>Enter</kbd> para calcular</div>
 
   </aside>
 
@@ -1867,6 +2184,8 @@ function renderResults(data){
   html += '<div class="name-dob">'+t('dobLabel')+' '+escH(formatDob(data.dob))+'</div>';
   if(tags) html += '<div class="name-tags">'+tags+'</div>';
   html += '</div></div>';
+  // Number summary strip
+  html += renderNumStrip(data);
 
   var tabs = ['identidade','jornada','presente','padroes','complementar','previsoes'];
   var tabLabels = [t('tabIdentidade'),t('tabJornada'),t('tabPresente'),t('tabPadroes'),t('secComplementar'),t('secPrevisoes')];
@@ -1932,8 +2251,80 @@ function attachTabEvents(){
   });
 }
 
+function renderNumStrip(data){
+  var nums=[
+    {n:data.dateCalc.lifepath.final, pre:data.dateCalc.lifepath.pre, lbl:'Caminho'},
+    {n:data.nameCalc.expression.final, pre:data.nameCalc.expression.pre, lbl:'Expressão'},
+    {n:data.nameCalc.motivation.final, pre:data.nameCalc.motivation.pre, lbl:'Motivação'},
+    {n:data.nameCalc.impression.final, pre:data.nameCalc.impression.pre, lbl:'Impressão'},
+    {n:data.dateCalc.attitude.final, pre:data.dateCalc.attitude.pre, lbl:'Atitude'},
+    {n:data.powerR.final, pre:data.powerR.pre, lbl:'Poder'},
+    {n:data.dateCalc.day.final, pre:data.dateCalc.day.pre, lbl:'Dia'},
+  ];
+  var html='<div class="num-strip">';
+  nums.forEach(function(nd){
+    var isMaster=!!MASTERS[nd.n], isKarmic=!!KARMIC[nd.pre];
+    var cls='num-strip-item'+(isMaster?' is-master':isKarmic?' is-karmic':'');
+    html+='<div class="'+cls+'"><div class="num-strip-n">'+nd.n+'</div><div class="num-strip-lbl">'+nd.lbl+'</div></div>';
+  });
+  html+='</div>';
+  return html;
+}
+
+function renderMandala(data){
+  var cx=110, cy=110, R=80, r=22, cr=32;
+  var nodes = [
+    {n: data.nameCalc.motivation.final,  pre: data.nameCalc.motivation.pre,  lbl:'MOT'},
+    {n: data.nameCalc.impression.final,  pre: data.nameCalc.impression.pre,   lbl:'IMP'},
+    {n: data.nameCalc.expression.final,  pre: data.nameCalc.expression.pre,   lbl:'EXP'},
+    {n: data.dateCalc.day.final,         pre: data.dateCalc.day.pre,           lbl:'DIA'},
+    {n: data.dateCalc.attitude.final,    pre: data.dateCalc.attitude.pre,      lbl:'ATI'},
+    {n: data.powerR.final,               pre: data.powerR.pre,                 lbl:'POD'},
+    {n: data.dateCalc.lifepath.final,    pre: data.dateCalc.lifepath.pre,      lbl:'CAM'}
+  ];
+  var lp = data.dateCalc.lifepath.final;
+  var lpPre = data.dateCalc.lifepath.pre;
+  var html = '<div class="mandala-wrap">';
+  html += '<svg class="mandala-svg" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">';
+  html += '<circle cx="'+cx+'" cy="'+cy+'" r="'+R+'" class="mandala-ring-outer"/>';
+  html += '<circle cx="'+cx+'" cy="'+cy+'" r="'+(R*0.55)+'" class="mandala-ring-inner"/>';
+  nodes.forEach(function(_,i){
+    var angle=(i/nodes.length)*Math.PI*2 - Math.PI/2;
+    var x2=cx+R*Math.cos(angle), y2=cy+R*Math.sin(angle);
+    html+='<line x1="'+cx+'" y1="'+cy+'" x2="'+x2+'" y2="'+y2+'" class="mandala-spoke"/>';
+  });
+  nodes.forEach(function(nd,i){
+    var angle=(i/nodes.length)*Math.PI*2 - Math.PI/2;
+    var nx=cx+R*Math.cos(angle), ny=cy+R*Math.sin(angle);
+    var isMaster=!!MASTERS[nd.n], isKarmic=!!(KARMIC[nd.pre]);
+    var cFill=isKarmic?'rgba(181,43,10,.15)':isMaster?'rgba(201,168,76,.2)':'rgba(201,168,76,.08)';
+    var cStroke=isKarmic?'rgba(181,43,10,.5)':isMaster?'rgba(201,168,76,.6)':'rgba(201,168,76,.2)';
+    html+='<g class="mandala-node">';
+    html+='<circle cx="'+nx+'" cy="'+ny+'" r="'+r+'" fill="'+cFill+'" stroke="'+cStroke+'" stroke-width="1"/>';
+    var numFill=isKarmic?'#b52b0a':isMaster?'#e8c97a':'#a08830';
+    html+='<text x="'+nx+'" y="'+(ny-4)+'" font-family="'PT Serif', serif" font-size="13" fill="'+numFill+'" text-anchor="middle" dominant-baseline="central">'+nd.n+'</text>';
+    html+='<text x="'+nx+'" y="'+(ny+11)+'" font-family="'JetBrains Mono', monospace" font-size="5.5" fill="#6d6862" text-anchor="middle" dominant-baseline="central" letter-spacing="0.06em">'+nd.lbl+'</text>';
+    html+='</g>';
+  });
+  var lpKarmic=!!KARMIC[lpPre];
+  var cStroke2=lpKarmic?'rgba(181,43,10,.6)':'rgba(201,168,76,.5)';
+  html+='<circle cx="'+cx+'" cy="'+cy+'" r="'+cr+'" fill="rgba(201,168,76,.12)" stroke="'+cStroke2+'" stroke-width="1.5"/>';
+  var centerFill=lpKarmic?'#b52b0a':'#c9a84c';
+  html+='<text x="'+cx+'" y="'+(cy-5)+'" font-family="'PT Serif', serif" font-size="22" fill="'+centerFill+'" text-anchor="middle" dominant-baseline="central">'+lp+'</text>';
+  html+='<text x="'+cx+'" y="'+(cy+14)+'" font-family="'JetBrains Mono', monospace" font-size="6" fill="#918c86" text-anchor="middle" dominant-baseline="central" letter-spacing="0.08em">VIDA</text>';
+  html+='</svg>';
+  html+='<div class="mandala-legend">';
+  html+='<span class="mandala-legend-item"><span class="mandala-legend-dot" style="background:#a08830"></span>regular</span>';
+  html+='<span class="mandala-legend-item"><span class="mandala-legend-dot" style="background:#c9a84c"></span>mestre</span>';
+  html+='<span class="mandala-legend-item"><span class="mandala-legend-dot" style="background:#b52b0a"></span>kármico</span>';
+  html+='</div>';
+  html+='</div>';
+  return html;
+}
+
 function renderIdentidade(data){
   var html = '';
+  html += renderMandala(data);
   html += buildBlock(t('blockName'), 'dot-name', [
     buildCard(data.nameCalc.motivation, t('roleMotivation'), 'badge-name', 'motivation'),
     buildCard(data.nameCalc.impression, t('roleImpression'), 'badge-name', 'impression'),
@@ -1962,26 +2353,69 @@ function renderIdentidade(data){
 
 function renderJornada(data){
   var html='', age=data.age;
+
+  // === CICLOS: Visual Timeline ===
   html+=buildSectionHead(t('secCiclos'),'dot-date');
-  html+='<div class="tiles-grid mb20">';
-  data.cycles.forEach(function(c){
-    var sub=c.end?(c.start+' – '+c.end+' '+t('labelYears')):(c.start+' '+t('labelYears')+' +');
-    html+=buildSimpleTile({final:c.num,pre:c.num},c.label,sub);
+  html+='<div class="cycles-timeline">';
+  data.cycles.forEach(function(c,i){
+    var totalSpan = c.end ? (c.end - c.start) : (80 - c.start);
+    var maxSpan = 36; // longest possible
+    var barW = Math.round(Math.min(totalSpan/36,1)*100);
+    var isCurrent = age >= c.start && (c.end === null || age < c.end);
+    var isMaster = !!MASTERS[c.num];
+    var cls = 'cycle-row' + (isCurrent?' current-cycle':'');
+    var ageRange = c.end ? (c.start+' – '+c.end+' anos') : (c.start+'+ anos');
+    html+='<div class="'+cls+'">';
+    html+='<div class="cycle-label">'+escH(c.label.replace('Ciclo ','C'))+'</div>';
+    html+='<div class="cycle-num'+(isMaster?' is-master':'')+'">' +c.num+'</div>';
+    html+='<div class="cycle-bar-track">';
+    var fillCls='cycle-bar-fill'+(isCurrent?' current':'');
+    html+='<div class="'+fillCls+'" style="width:'+barW+'%"></div>';
+    html+='</div>';
+    html+='<div class="cycle-ages">'+ageRange+'</div>';
+    if(isCurrent) html+='<div class="cycle-current-badge">AGORA</div>';
+    html+='</div>';
   });
   html+='</div>';
+
+  // === PÍNÁCULOS: Bar Chart ===
   html+=buildSectionHead(t('secPinnacles'),'dot-date');
-  html+='<div class="tiles-grid mb20">';
-  data.pinnacles.forEach(function(p){
-    var sub=p.end?(p.start+' – '+p.end+' '+t('labelYears')):(p.start+' '+t('labelYears')+' +');
-    html+=buildSimpleTile({final:p.num,pre:p.num},p.label,sub);
+  html+='<div class="pinnacles-chart">';
+  var maxPin = Math.max.apply(null, data.pinnacles.map(function(p){return p.num||1;}));
+  data.pinnacles.forEach(function(p,i){
+    var barH = Math.round((p.num/9)*80);
+    var isCurrent = age >= p.start && (p.end===null||age<p.end);
+    var isMaster = !!MASTERS[p.num];
+    var cls='pinnacle-bar'+(isCurrent?' current-pin':isMaster?' is-master':'');
+    html+='<div class="pinnacle-bar-wrap">';
+    html+='<div class="'+cls+'" style="height:'+barH+'px">';
+    var numCls='pinnacle-bar-num'+(isMaster?' is-master':'');
+    html+='<div class="'+numCls+'">'+p.num+'</div>';
+    html+='</div>';
+    html+='</div>';
+  });
+  html+='<div class="pinnacle-footer">';
+  data.pinnacles.forEach(function(p,i){
+    var isCurrent = age >= p.start && (p.end===null||age<p.end);
+    var ages = p.end ? (p.start+' – '+p.end) : (p.start+'+');
+    html+='<div class="pinnacle-footer-item">';
+    html+='<span class="pinnacle-footer-label">P'+(i+1)+'</span>';
+    html+='<span class="pinnacle-footer-ages">'+ages+'</span>';
+    if(isCurrent) html+='<span class="pinnacle-current-label">AGORA</span>';
+    html+='</div>';
   });
   html+='</div>';
+  html+='</div>';
+
+  // === DESAFIOS ===
   html+=buildSectionHead(t('secDesafios'),'dot-date');
   html+='<div class="tiles-grid cols4 mb20">';
   data.challenges.forEach(function(ch){
     html+=buildSimpleTile({final:ch.num,pre:ch.num},ch.label,'');
   });
   html+='</div>';
+
+  // === PROJEÇÃO ===
   html+=buildSectionHead(t('secProjection'),'dot-master');
   html+='<div class="projection-wrap mb20"><div class="projection-title">'+t('yearLabel')+' · '+t('numberLabel')+'</div>';
   var curYr=new Date().getFullYear();
@@ -1998,6 +2432,7 @@ function renderJornada(data){
   html+='</div>';
   return html;
 }
+
 function buildSectionHead(label, dotClass){
   return '<div class="block-header"><div class="block-dot '+dotClass+'"></div><div class="block-label">'+escH(label)+'</div><div class="block-line"></div></div>';
 }
@@ -2049,28 +2484,77 @@ function renderPresente(data){
   html+='</div>';
   return html;
 }
+function renderRadar(data){
+  var els = data.elements;
+  var vals = [els.fogo.count, els.ar.count, els.terra.count, els.agua.count];
+  var labels = ['🔥 FOGO','💨 AR','🌍 TERRA','💧 ÁGUA'];
+  var colors = ['#c9a84c','#a08830','#c9a84c','#a08830'];
+  var maxV = Math.max.apply(null, vals.concat([1]));
+  var cx=80, cy=80, R=55;
+  var html='<div class="radar-wrap">';
+  html+='<svg class="radar-svg" width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">';
+  // Grid rings
+  [0.33,0.66,1].forEach(function(frac){
+    var rr=R*frac;
+    var pts=[];
+    for(var i=0;i<4;i++){
+      var a=(i/4)*Math.PI*2 - Math.PI/2;
+      pts.push((cx+rr*Math.cos(a)).toFixed(1)+','+(cy+rr*Math.sin(a)).toFixed(1));
+    }
+    html+='<polygon points="'+pts.join(' ')+'" fill="none" stroke="rgba(201,168,76,.12)" stroke-width="1"/>';
+  });
+  // Axes
+  for(var i=0;i<4;i++){
+    var a=(i/4)*Math.PI*2 - Math.PI/2;
+    html+='<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+R*Math.cos(a)).toFixed(1)+'" y2="'+(cy+R*Math.sin(a)).toFixed(1)+'" stroke="rgba(201,168,76,.10)" stroke-width="1"/>';
+  }
+  // Data polygon
+  var datapts=[];
+  for(var i=0;i<4;i++){
+    var a=(i/4)*Math.PI*2 - Math.PI/2;
+    var frac=vals[i]/maxV;
+    datapts.push((cx+R*frac*Math.cos(a)).toFixed(1)+','+(cy+R*frac*Math.sin(a)).toFixed(1));
+  }
+  html+='<polygon points="'+datapts.join(' ')+'" fill="rgba(201,168,76,.15)" stroke="rgba(201,168,76,.5)" stroke-width="1.5"/>';
+  // Dots
+  for(var i=0;i<4;i++){
+    var a=(i/4)*Math.PI*2 - Math.PI/2;
+    var frac=vals[i]/maxV;
+    var dx=(cx+R*frac*Math.cos(a)).toFixed(1), dy=(cy+R*frac*Math.sin(a)).toFixed(1);
+    html+='<circle cx="'+dx+'" cy="'+dy+'" r="4" fill="#c9a84c" opacity="0.8"/>';
+  }
+  html+='</svg>';
+  // Legend
+  html+='<div class="radar-legend">';
+  var maxC=Math.max.apply(null,vals);
+  [
+    {key:'fogo',icon:'🔥',label:'FOGO'},
+    {key:'ar',icon:'💨',label:'AR'},
+    {key:'terra',icon:'🌍',label:'TERRA'},
+    {key:'agua',icon:'💧',label:'ÁGUA'}
+  ].forEach(function(e,i){
+    var cnt=vals[i], isDom=cnt===maxC&&maxC>0;
+    html+='<div class="radar-legend-item'+(isDom?' dominant':'')+'">';
+    html+='<span style="font-size:.9rem">'+e.icon+'</span>';
+    html+='<div class="radar-legend-name">'+e.label+(isDom?' ✦':'')+'</div>';
+    html+='<div class="radar-legend-count">'+cnt+'</div>';
+    html+='</div>';
+  });
+  html+='</div>';
+  html+='</div>';
+  return html;
+}
+
 function renderPadroes(data){
   var html='';
   html+=buildSectionHead(t('secElements'),'dot-date');
-  var els=data.elements, maxEl=Math.max(els.fogo.count,els.terra.count,els.ar.count,els.agua.count);
-  html+='<div class="elements-wrap mb20"><div class="elements-title">'+t('secElements')+'</div><div class="elements-grid-4">';
-  [{key:'fogo',icon:'🔥',label:t('labelFogo')},{key:'terra',icon:'🌍',label:t('labelTerra')},
-   {key:'ar',icon:'💨',label:t('labelAr')},{key:'agua',icon:'💧',label:t('labelAgua')}].forEach(function(e){
-    var d=els[e.key], isDom=d.count===maxEl&&maxEl>0;
-    html+='<div class="el-cell'+(isDom?' dominant':'')+'">'
-      +'<span class="el-icon">'+e.icon+'</span>'
-      +'<div class="el-count">'+d.count+'</div>'
-      +'<div class="el-name">'+escH(e.label)+(isDom?' · '+t('labelDominant'):'')+'</div>'
-      +'<div class="el-bar-wrap"><div class="el-bar" style="width:'+(maxEl?d.count/maxEl*100:0)+'%"></div></div>'
-      +'</div>';
-  });
-  html+='</div></div>';
+  html+=renderRadar(data);
+
   html+=buildSectionHead(t('secTable'),'dot-name');
   var tbl=data.pythTable, maxT=Math.max.apply(null,[1,2,3,4,5,6,7,8,9].map(function(n){return tbl[n];}));
   html+='<div class="pyth-table-wrap mb20"><div class="pyth-table-title">'+t('secTable')+'</div><div class="pyth-table-grid">';
   for(var n=1;n<=9;n++){
-    html+='<div class="pyth-cell'+(tbl[n]===maxT&&maxT>0?' max':'')+(tbl[n]===0?' zero':'')+'">'
-      +'<div class="pyth-n">'+n+'</div><div class="pyth-count">'+tbl[n]+'</div></div>';
+    html+='<div class="pyth-cell'+(tbl[n]===maxT&&maxT>0?' max':'')+(tbl[n]===0?' zero':'')+'"><div class="pyth-n">'+n+'</div><div class="pyth-count">'+tbl[n]+'</div></div>';
   }
   html+='</div><div class="pyth-bar-row">';
   for(var n=1;n<=9;n++){
@@ -2082,11 +2566,7 @@ function renderPadroes(data){
   html+='<div class="priority-wrap mb20"><div class="priority-title">'+t('secPriority')+'</div>';
   var maxPri=data.priority[0]?data.priority[0].count:1;
   data.priority.forEach(function(p,i){
-    html+='<div class="priority-row'+(i===0?' rank1':'')+'">'
-      +'<div class="priority-rank">'+(i+1)+'</div>'
-      +'<div class="priority-num">'+p.num+'</div>'
-      +'<div class="priority-bar-track"><div class="priority-bar-fill" style="width:'+(p.count/maxPri*100)+'%"></div></div>'
-      +'<div class="priority-count">'+p.count+'×</div></div>';
+    html+='<div class="priority-row'+(i===0?' rank1':'')+'"><div class="priority-rank">'+(i+1)+'</div><div class="priority-num">'+p.num+'</div><div class="priority-bar-track"><div class="priority-bar-fill" style="width:'+(p.count/maxPri*100)+'%"></div></div><div class="priority-count">'+p.count+'×</div></div>';
   });
   html+='</div>';
   html+=buildSectionHead(t('secKarmicLessons'),'dot-karmic');
@@ -2096,6 +2576,7 @@ function renderPadroes(data){
   html+='</div></div>';
   return html;
 }
+
 function renderComplementar(data){
   var html='';
   html+=buildSectionHead(t('secComplementar'),'dot-name');
@@ -2479,6 +2960,19 @@ function setupDateAutoAdvance() {
 
   setupDateListeners();
   setupDateAutoAdvance();
+
+  // Enter key to calculate
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){
+      var active = document.activeElement;
+      var isInput = active && (active.id === 'inputName' || active.id === 'inputDay' || active.id === 'inputMonth' || active.id === 'inputYear');
+      if(isInput) calculate();
+    }
+  });
+
+  // Auto-focus on name input
+  var nameInput = document.getElementById('inputName');
+  if(nameInput) setTimeout(function(){ nameInput.focus(); }, 100);
 })();
 
 </script>
