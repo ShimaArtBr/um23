@@ -3,7 +3,7 @@
    Estrategia: cache-first · offline-ready
    Atualizado para arquitetura modular ES Modules
 ═══════════════════════════════════════════════════ */
-var CACHE = 'um23-v3';
+var CACHE = 'um23-v4';
 var CORE  = [
   '/',
   '/index.html',
