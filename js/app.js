@@ -135,12 +135,12 @@ function setupDateAutoAdvance() {
   }
 }
 
-function validate(){ return,(); }
+function validate(){ return parseDateFields(); }
 
 function calculate(){
   var name = document.getElementById('inputName').value.trim();
   if(!name){ alert(t('errName')); return; }
-  var dob =,();
+  var dob = parseDateFields();
   if(!dob) return;
   var nameCalc = calcName(name);
   var dateCalc = calcDate(dob);
