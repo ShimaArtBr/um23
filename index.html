@@ -329,6 +329,20 @@ body::before {
   margin-bottom: 16px; display: block;
   animation: float 4s ease-in-out infinite;
 }
+.empty-state::before {
+  content: '';
+  position: absolute; inset: -1px;
+  border-radius: var(--r-lg);
+  background: transparent;
+  border: 1px solid transparent;
+  animation: emptyGlow 3s ease-in-out infinite;
+  pointer-events: none;
+}
+.empty-state { position: relative; }
+@keyframes emptyGlow {
+  0%,100% { border-color: rgba(201,168,76,.04); }
+  50% { border-color: rgba(201,168,76,.12); }
+}
 @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
 .empty-title { font-family: 'PT Serif', serif; font-size: 1.15rem; color: var(--muted); margin-bottom: 8px; font-weight: 400; }
 .empty-sub { font-size: .82rem; color: var(--dim); font-weight: 300; }
@@ -377,6 +391,9 @@ body::before {
 
 .cards-grid { display: grid; grid-template-columns: 1fr; gap: var(--sp-3); margin-bottom: 12px; }
 .cards-grid.single { grid-template-columns: 1fr; }
+.cards-grid .num-card:nth-child(1) { animation-delay: 0ms; }
+.cards-grid .num-card:nth-child(2) { animation-delay: 60ms; }
+.cards-grid .num-card:nth-child(3) { animation-delay: 120ms; }
 
 .num-card {
   background: var(--panel);
@@ -465,25 +482,67 @@ body::before {
   border: 1px solid var(--bg-gold);
   border-radius: var(--r-lg);
   padding: 5px;
-  margin-bottom: 18px;
+  margin-bottom: 22px;
   animation: slideIn var(--t-slow) var(--ease-in);
+  position: relative;
+}
+.map-tabs-progress {
+  position: absolute; bottom: -12px; left: 0; right: 0;
+  height: 2px; background: var(--bg-gold); border-radius: 1px;
+}
+.map-tabs-progress-fill {
+  height: 100%; background: var(--gold); border-radius: 1px;
+  transition: width var(--t-mid) var(--ease), left var(--t-mid) var(--ease);
 }
 .map-tab {
-  flex: 1; padding: 9px 6px;
+  flex: 1; padding: 8px 6px;
   background: transparent; border: none;
   border-radius: var(--r); cursor: pointer;
   font-family: 'JetBrains Mono', monospace;
-  font-size: .60rem; letter-spacing: .10em; text-transform: uppercase;
+  font-size: .58rem; letter-spacing: .08em; text-transform: uppercase;
   color: var(--muted);
   transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  position: relative;
 }
+.map-tab-icon { font-size: .80rem; line-height: 1; }
 .map-tab:hover { color: var(--gold); background: var(--bg-gold); }
 .map-tab.active {
   background: var(--bg-gold);
   color: var(--gold); border: 1px solid rgba(201,168,76,.25);
 }
-.map-panel { display: none; }
-.map-panel.active { display: block; }
+.map-tab.active::after {
+  content: '';
+  position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
+  width: 16px; height: 2px;
+  background: var(--gold);
+  border-radius: 1px;
+}
+.tab-nav-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .50rem; color: var(--dim);
+  letter-spacing: .08em;
+  text-align: center;
+  margin-top: -14px; margin-bottom: 18px;
+  opacity: .5;
+}
+@media (max-width: 820px) {
+  .tab-nav-hint { display: none; }
+}
+
+.map-panel { 
+  display: none;
+  opacity: 0;
+  transform: translateY(6px);
+}
+.map-panel.active { 
+  display: block;
+  animation: panelFadeIn 220ms var(--ease) forwards;
+}
+@keyframes panelFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
 .tiles-section { margin-bottom: 22px; }
 .tiles-grid {
@@ -505,9 +564,10 @@ body::before {
   border-radius: var(--r-lg);
   padding: 14px 12px;
   text-align: center;
-  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
   animation: slideIn var(--t-slow) var(--ease-in) both;
 }
+.s-tile:hover { transform: translateY(-2px); }
 .s-tile:hover { background: var(--panel2); border-color: rgba(201,168,76,.18); }
 .s-tile.master { border-color: rgba(201,168,76,.4); background: rgba(201,168,76,.03); }
 .s-tile.karmic { border-color: rgba(181,43,10,.35); }
@@ -2114,6 +2174,16 @@ function calcPersonalDay(dob){
 function validate(){ return parseDateFields(); }
 
 function calculate(){
+  // Visual feedback on button
+  var btn = document.getElementById('calcBtn');
+  if(btn){ btn.textContent = 'CALCULANDO...'; btn.disabled = true; }
+  setTimeout(function(){ _doCalculate(); }, 30);
+  // Reset button after
+  setTimeout(function(){
+    if(btn){ btn.textContent = 'CALCULAR MEU MAPA'; btn.disabled = false; }
+  }, 500);
+}
+function _doCalculate(){
   var name = document.getElementById('inputName').value.trim();
   if(!name){ alert(t('errName')); return; }
   var dob = parseDateFields();
@@ -2148,6 +2218,7 @@ function calculate(){
   };
   window._lastCalc = data;
   renderResults(data);
+}
 }
 
 function getKarmicKey(pre){ return 'k'+pre; }
@@ -2189,12 +2260,17 @@ function renderResults(data){
 
   var tabs = ['identidade','jornada','presente','padroes','complementar','previsoes'];
   var tabLabels = [t('tabIdentidade'),t('tabJornada'),t('tabPresente'),t('tabPadroes'),t('secComplementar'),t('secPrevisoes')];
+  var tabIcons = ['◈','◎','◉','◇','◫','◷'];
   html += '<div class="map-tabs" id="mapTabs">';
   tabs.forEach(function(tab,i){
     var act = tab===_activeTab ? ' active' : '';
-    html += '<button class="map-tab'+act+'" data-tab="'+tab+'">'+escH(tabLabels[i])+'</button>';
+    html += '<button class="map-tab'+act+'" data-tab="'+tab+'">';
+    html += '<span class="map-tab-icon">'+tabIcons[i]+'</span>';
+    html += '<span>'+escH(tabLabels[i])+'</span>';
+    html += '</button>';
   });
   html += '</div>';
+  html += '<div class="tab-nav-hint">← → para navegar entre abas</div>';
 
   html += '<div class="map-panel'+(_activeTab==='identidade'?' active':'')+'" id="panel-identidade">';
   html += renderIdentidade(data);
@@ -2223,20 +2299,67 @@ function renderResults(data){
   document.getElementById('results').innerHTML = html;
   attachCardEvents();
   attachTabEvents();
+  // Smooth scroll to results on mobile
+  if(window.innerWidth < 820){
+    var resultsPanel = document.getElementById('resultsPanel');
+    if(resultsPanel) setTimeout(function(){ resultsPanel.scrollIntoView({behavior:'smooth', block:'start'}); }, 80);
+  }
 }
 
 function attachTabEvents(){
+  var TABS_ORDER = ['identidade','jornada','presente','padroes','complementar','previsoes'];
+
+  function switchTab(tab){
+    _activeTab = tab;
+    document.querySelectorAll('.map-tab').forEach(function(b){b.classList.remove('active');});
+    document.querySelectorAll('.map-panel').forEach(function(p){
+      p.classList.remove('active');
+      p.style.display = 'none';
+    });
+    var activeBtn = document.querySelector('.map-tab[data-tab="'+tab+'"]');
+    if(activeBtn) activeBtn.classList.add('active');
+    var panel = document.getElementById('panel-'+tab);
+    if(panel){ panel.style.display = 'block'; panel.classList.add('active'); }
+    // Scroll tabs into view on mobile
+    if(activeBtn && window.innerWidth < 820){
+      activeBtn.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+    }
+  }
+
   document.querySelectorAll('.map-tab').forEach(function(btn){
     btn.addEventListener('click', function(){
-      var tab=this.getAttribute('data-tab');
-      _activeTab=tab;
-      document.querySelectorAll('.map-tab').forEach(function(b){b.classList.remove('active');});
-      document.querySelectorAll('.map-panel').forEach(function(p){p.classList.remove('active');});
-      this.classList.add('active');
-      var panel=document.getElementById('panel-'+tab);
-      if(panel) panel.classList.add('active');
+      switchTab(this.getAttribute('data-tab'));
     });
   });
+
+  // Keyboard navigation: ArrowLeft/Right between tabs
+  document.addEventListener('keydown', function(e){
+    if(!document.getElementById('results') || document.getElementById('results').style.display === 'none') return;
+    if(e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    var focused = document.activeElement;
+    if(focused && (focused.tagName === 'INPUT' || focused.tagName === 'TEXTAREA')) return;
+    var idx = TABS_ORDER.indexOf(_activeTab);
+    if(e.key === 'ArrowLeft' && idx > 0) switchTab(TABS_ORDER[idx-1]);
+    if(e.key === 'ArrowRight' && idx < TABS_ORDER.length-1) switchTab(TABS_ORDER[idx+1]);
+  });
+
+  // Touch swipe support
+  var resultsEl = document.getElementById('results');
+  if(resultsEl){
+    var touchStartX = 0, touchStartY = 0;
+    resultsEl.addEventListener('touchstart', function(e){
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, {passive:true});
+    resultsEl.addEventListener('touchend', function(e){
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      var dy = e.changedTouches[0].clientY - touchStartY;
+      if(Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx)*0.8) return;
+      var idx2 = TABS_ORDER.indexOf(_activeTab);
+      if(dx < 0 && idx2 < TABS_ORDER.length-1) switchTab(TABS_ORDER[idx2+1]);
+      if(dx > 0 && idx2 > 0) switchTab(TABS_ORDER[idx2-1]);
+    }, {passive:true});
+  }
   document.querySelectorAll('.num-card').forEach(function(card){
     var tabs=card.querySelectorAll('.section-tab');
     var panes=card.querySelectorAll('.section-content');
@@ -2621,7 +2744,65 @@ function renderComplementar(data){
   return html;
 }
 function renderPrevisoes(data){
-  return renderPresente(data);
+  // Previsões tab shows personal year context with more interpretation hints
+  var html = '';
+  var pd = data.personalDay;
+  html += buildSectionHead('ANO · MÊS · DIA PESSOAL', 'dot-date');
+  html += '<div class="tiles-grid mb20">';
+  html += buildSimpleTile(pd.year, 'Ano Pessoal', String(pd.todayYear), 'highlight');
+  html += buildSimpleTile(pd.month, 'Mês Pessoal', 'este mês', '');
+  html += buildSimpleTile(pd.day, 'Dia Pessoal', 'hoje', 'highlight');
+  html += '</div>';
+  // Year energy description
+  var yearN = pd.year.final;
+  var yearDescriptions = {
+    1: 'Ano de novos começos. Plante sementes, tome iniciativas, lance projetos.',
+    2: 'Ano de cooperação. Cultive parcerias, seja paciente, ouça mais.',
+    3: 'Ano de expressão. Comunique, crie, expanda sua vida social.',
+    4: 'Ano de construção. Estabeleça fundações, trabalhe com consistência.',
+    5: 'Ano de mudança. Aventure-se, adapte-se, abraçe o inesperado.',
+    6: 'Ano de responsabilidade. Família, lar e compromissos em foco.',
+    7: 'Ano de introspecção. Estude, reflita, aprofunde o autoconhecimento.',
+    8: 'Ano de poder. Realize ambições materiais, expanda influência.',
+    9: 'Ano de conclusão. Encerre ciclos, perdoe, prepare o próximo início.',
+    11: 'Ano Mestre 11. Intuição elevada, missão espiritual em evidência.',
+    22: 'Ano Mestre 22. Construção em grande escala, visão coletiva.'
+  };
+  var yDesc = yearDescriptions[yearN] || '';
+  if(yDesc){
+    html += '<div class="section-desc" style="background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.12);border-radius:8px;padding:12px 16px;font-size:.84rem;color:var(--text);">';
+    html += '<strong style="font-family:'JetBrains Mono',monospace;font-size:.60rem;color:var(--gold);letter-spacing:.10em;display:block;margin-bottom:4px;">ANO '+yearN+'</strong>';
+    html += escH(yDesc);
+    html += '</div>';
+  }
+  html += buildSectionHead('MESES PESSOAIS', 'dot-date');
+  var mNames = t('monthNames').split(',');
+  html += '<div class="months-grid mb20">';
+  data.trimestres.forEach(function(m){
+    var isCurrent = (m.month === pd.todayMonth);
+    var cls = 'month-tile' + (m.isMaster?' master':'') + (isCurrent?' current':'');
+    html += '<div class="'+cls+'">';
+    html += '<div class="month-name">' + escH(mNames[m.month-1]||m.month) + '</div>';
+    html += '<div class="month-num">'+m.num+'</div>';
+    if(m.isMaster) html += '<div class="month-tag">✦</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+  html += buildSectionHead(t('secProjection'), 'dot-master');
+  html += '<div class="projection-wrap mb20"><div class="projection-title">'+t('yearLabel')+' · '+t('numberLabel')+'</div>';
+  var curYr = new Date().getFullYear();
+  data.projection.forEach(function(p){
+    var isCur = (p.year === curYr);
+    var cls = 'projection-row'+(p.isMaster?' master':'')+(isCur?' current':'');
+    html += '<div class="'+cls+'">'
+      + '<div class="proj-year">'+p.year+'</div>'
+      + '<div class="proj-num">'+p.num+'</div>'
+      + '<div class="proj-bar-track"><div class="proj-bar-fill" style="width:'+(p.num/9*100)+'%"></div></div>'
+      + (isCur ? '<div class="proj-current-tag">'+t('labelCurrentYear')+'</div>' : '')
+      + '</div>';
+  });
+  html += '</div>';
+  return html;
 }
 var _cardCounter = 0;
 function buildBlock(label, dotClass, cards, layoutClass){
