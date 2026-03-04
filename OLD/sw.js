@@ -1,29 +1,9 @@
 /* ═══════════════════════════════════════════════════
-   UM23 — Service Worker v3
-   Estrategia: cache-first · offline-ready
-   Atualizado para arquitetura modular ES Modules
+   UM23 — Service Worker v2
+   Estratégia: cache-first · offline-ready
 ═══════════════════════════════════════════════════ */
-var CACHE = 'um23-v3';
-var CORE  = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-
-  /* CSS modular */
-  '/css/tokens.css',
-  '/css/layout.css',
-  '/css/components.css',
-  '/css/charts.css',
-
-  /* JS modular */
-  '/js/app.js',
-  '/js/engine.js',
-  '/js/render.js',
-  '/js/data/i18n.pt.js',
-  '/js/data/texts.pt.js',
-  '/js/data/i18n.en.js',
-  '/js/data/texts.en.js'
-];
+var CACHE = 'um23-v2';
+var CORE  = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', function(e) {
   e.waitUntil(

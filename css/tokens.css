@@ -1,0 +1,76 @@
+/* tokens.css — Variaveis CSS, reset, tipografia */
+
+
+/* ═══════════════════════════════════════════════════
+   DESIGN TOKENS — SOLLUN Design System v2 (Unified)
+═══════════════════════════════════════════════════ */
+:root {
+  --gold:        #c9a84c;
+  --gold2:       #e8c97a;
+  --gold-dim:    #a08830;
+  --bg-gold:     rgba(201,168,76,.10);
+  --accent:      #6b4a4a;
+  --accent2:     #8a6060;
+  --bg-accent:   rgba(107,74,74,.10);
+  --success:     #3d9970;
+  --error:       #c44a35;
+  --info:        #7a7570;
+  --r:    8px;
+  --r-lg: 12px;
+  --sp-1:  4px;
+  --sp-2:  8px;
+  --sp-3:  12px;
+  --sp-4:  16px;
+  --sp-6:  24px;
+  --sp-8:  32px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+  --ease:  cubic-bezier(.25,.1,.25,1);
+  --ease-in: cubic-bezier(.0,.0,.2,1);
+  --ease-out: cubic-bezier(.4,.0,1,1);
+  --t-fast: 200ms;
+  --t-mid:  350ms;
+  --t-slow: 500ms;
+  --transition-theme: background var(--t-fast) var(--ease),
+                      color var(--t-fast) var(--ease),
+                      border-color var(--t-fast) var(--ease);
+}
+
+[data-theme="dark"] {
+  --bg:       #0b0a0a;
+  --surface:  #131211;
+  --panel:    #1c1a18;
+  --panel2:   #242120;
+  --text:     #e8e5e0;
+  --muted:    #918c86;
+  --dim:      #6d6862;
+  --shadow:   rgba(0,0,0,.50);
+  --topbar-bg: rgba(19,18,17,.88);
+}
+[data-theme="light"] {
+  --bg:       #f5f2ea;
+  --surface:  #faf8f2;
+  --panel:    #ffffff;
+  --panel2:   #f0ede4;
+  --text:     #1a1814;
+  --muted:    #6b6458;
+  --dim:      #9a9488;
+  --shadow:   rgba(0,0,0,.06);
+  --topbar-bg: rgba(250,248,242,.90);
+}
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+strong, b, h1, h2, h3, h4, h5, h6 { font-weight: 400; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 3px; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Sans', sans-serif;
+  font-weight: 300;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.7;
+  transition: var(--transition-theme);
+}
+
+@media (prefers-reduced-motion: reduce) {
