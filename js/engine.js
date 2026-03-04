@@ -89,43 +89,6 @@ function formatDob(dob){
 }
 
 /* ── Parse user-entered date (DD/MM/AAAA) to YYYY-MM-DD ── */
-function parseDateFields(){
-  var dayEl   = document.getElementById('inputDay');
-  var monEl   = document.getElementById('inputMonth');
-  var yrEl    = document.getElementById('inputYear');
-  var d = parseInt(dayEl.value, 10);
-  var m = parseInt(monEl.value, 10);
-  var y = parseInt(yrEl.value,  10);
-  clearDateErrors();
-  var valid = true;
-
-  if(isNaN(m) || m < 1 || m > 12){
-    monEl.classList.add('input-error');
-    setDateError(t('errMonth'));
-    valid = false;
-  }
-  if(isNaN(y) || y < 1900 || y > 2100){
-    yrEl.classList.add('input-error');
-    if(valid) setDateError(t('errYear'));
-    valid = false;
-  }
-  if(!isNaN(m) && m >= 1 && m <= 12 && !isNaN(y) && y >= 1900){
-    var maxD = daysInMonth(m, y);
-    if(isNaN(d) || d < 1 || d > maxD){
-      dayEl.classList.add('input-error');
-      if(valid) setDateError(d > maxD ? t('errDayMax') : t('errDay'));
-      valid = false;
-    }
-  } else if(isNaN(d) || d < 1 || d > 31){
-    dayEl.classList.add('input-error');
-    if(valid) setDateError(t('errDay'));
-    valid = false;
-  }
-  if(!valid) return null;
-  var mm = m < 10 ? '0'+m : String(m);
-  var dd = d < 10 ? '0'+d : String(d);
-  return y+'-'+mm+'-'+dd;
-}
 
 /* ════════════════════════════════════════════════
    EXTENDED NUMEROLOGY ENGINE
@@ -282,7 +245,7 @@ export {
   PYT, VOWELS, MASTERS, KARMIC,
   normalize, reduceNum, sumLetters,
   calcName, calcDate, calcPower,
-  getInitials, formatDob, parseDateFields,
+  getInitials, formatDob,
   calcCycles, calcPinnacles, calcChallenges,
   calcPersonalYear, calcProjection, calcTrimestres,
   calcAge, calcElements, calcPythTable, calcPriority,

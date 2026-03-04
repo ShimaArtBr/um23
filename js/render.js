@@ -2,53 +2,15 @@
 // Depende de: engine.js, i18n.pt.js, texts.pt.js
 
 import {
-  MASTERS, KARMIC,
+  PYT, VOWELS, MASTERS, KARMIC,
   normalize, reduceNum, getInitials, formatDob
 } from './engine.js';
 import { TEXTS } from './data/texts.pt.js';
-import { I18N, t } from './data/i18n.pt.js';
+import { t } from './data/i18n.pt.js';
 
 /* ════════════════════════════════════════════════
    RENDER ENGINE
 ════════════════════════════════════════════════ */
-function validate(){ return parseDateFields(); }
-
-function calculate(){
-  var name = document.getElementById('inputName').value.trim();
-  if(!name){ alert(t('errName')); return; }
-  var dob = parseDateFields();
-  if(!dob) return;
-  var nameCalc = calcName(name);
-  var dateCalc = calcDate(dob);
-  var powerR   = calcPower(nameCalc.expression.final, dateCalc.lifepath.final);
-  var lp = dateCalc.lifepath.final;
-  var pythTable = calcPythTable(name);
-  var data = {
-    name: name, dob: dob, nameCalc: nameCalc, dateCalc: dateCalc, powerR: powerR,
-    cycles:     calcCycles(dob, lp),
-    pinnacles:  calcPinnacles(dob, lp),
-    challenges: calcChallenges(dob),
-    projection: calcProjection(dob),
-    trimestres: calcTrimestres(dob),
-    age:        calcAge(dob),
-    elements:   calcElements(name),
-    pythTable:  pythTable,
-    priority:   calcPriority(pythTable),
-    karmicLessons: calcKarmicLessons(pythTable),
-    cornerstone:   calcCornerstone(name),
-    capstone:      calcCapstone(name),
-    firstVowel:    calcFirstVowel(name),
-    balance:       calcBalance(name),
-    rational:      calcRational(name, dob),
-    subconscious:  calcSubconscious(calcKarmicLessons(pythTable)),
-    hiddenPassion: calcHiddenPassion(pythTable),
-    bridges:       calcBridges(nameCalc.motivation.final, nameCalc.expression.final, dateCalc.lifepath.final, nameCalc.impression.final),
-    planes:        calcPlanes(name),
-    personalDay:   calcPersonalDay(dob)
-  };
-  window._lastCalc = data;
-  renderResults(data);
-}
 
 function getKarmicKey(pre){ return 'k'+pre; }
 
