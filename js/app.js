@@ -27,11 +27,7 @@ import {
 import { t } from './data/i18n.pt.js';
 import { TEXTS } from './data/texts.pt.js';
 
-// Expose to inline HTML onclick handlers (necessario para onclick= no HTML)
-window.calculate  = calculate;
-window.showSobre  = showSobre;
-window.hideSobre  = hideSobre;
-window.toggleTheme = toggleTheme;
+// (window assignments moved to bottom — ver secao INIT)
 
 /* ════════════════════════════════════════════════
    THEME
@@ -193,6 +189,13 @@ function calculate(){
 /* ════════════════════════════════════════════════
    INIT
 ════════════════════════════════════════════════ */
+
+// Expose to inline HTML onclick handlers (ES Modules têm escopo proprio —
+// funcoes nao ficam em window automaticamente)
+window.calculate   = calculate;
+window.showSobre   = showSobre;
+window.hideSobre   = hideSobre;
+window.toggleTheme = toggleTheme;
 
 function parseDateFields(){
   var dayEl   = document.getElementById('inputDay');

@@ -686,5 +686,5 @@ export {
   buildLetterTile, buildBridgeRow,
   attachTabEvents, attachCardEvents,
   escH, renderNameBreakdown,
-  showSobre, hideSobre, renderSobre,
+  showSobre, hideSobre, renderSobre
 };
