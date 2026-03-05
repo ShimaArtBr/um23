@@ -15,6 +15,7 @@ import { t } from './data/i18n.pt.js';
 function getKarmicKey(pre){ return 'k'+pre; }
 
 var _activeTab = 'identidade';
+var _globalEventsInit = false; // guard against listener leak on repeated calculate()
 
 function renderResults(data){
   var emptyState = document.getElementById('emptyState');
@@ -106,28 +107,31 @@ function attachTabEvents(){
   document.querySelectorAll('.map-tab').forEach(function(btn){
     btn.addEventListener('click',function(){switchTab(this.getAttribute('data-tab'));});
   });
-  document.addEventListener('keydown',function(e){
-    var res=document.getElementById('results');
-    if(!res||res.style.display==='none') return;
-    if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight') return;
-    var focused=document.activeElement;
-    if(focused&&(focused.tagName==='INPUT'||focused.tagName==='TEXTAREA')) return;
-    var idx=TABS_ORDER.indexOf(_activeTab);
-    if(e.key==='ArrowLeft'&&idx>0) switchTab(TABS_ORDER[idx-1]);
-    if(e.key==='ArrowRight'&&idx<TABS_ORDER.length-1) switchTab(TABS_ORDER[idx+1]);
-  });
-  var resultsEl=document.getElementById('results');
-  if(resultsEl){
-    var touchStartX=0,touchStartY=0;
-    resultsEl.addEventListener('touchstart',function(e){touchStartX=e.touches[0].clientX;touchStartY=e.touches[0].clientY;},{passive:true});
-    resultsEl.addEventListener('touchend',function(e){
-      var dx=e.changedTouches[0].clientX-touchStartX;
-      var dy=e.changedTouches[0].clientY-touchStartY;
-      if(Math.abs(dx)<60||Math.abs(dy)>Math.abs(dx)*0.8) return;
-      var idx2=TABS_ORDER.indexOf(_activeTab);
-      if(dx<0&&idx2<TABS_ORDER.length-1) switchTab(TABS_ORDER[idx2+1]);
-      if(dx>0&&idx2>0) switchTab(TABS_ORDER[idx2-1]);
-    },{passive:true});
+  if(!_globalEventsInit){
+    _globalEventsInit = true;
+    document.addEventListener('keydown',function(e){
+      var res=document.getElementById('results');
+      if(!res||res.style.display==='none') return;
+      if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight') return;
+      var focused=document.activeElement;
+      if(focused&&(focused.tagName==='INPUT'||focused.tagName==='TEXTAREA')) return;
+      var idx=TABS_ORDER.indexOf(_activeTab);
+      if(e.key==='ArrowLeft'&&idx>0) switchTab(TABS_ORDER[idx-1]);
+      if(e.key==='ArrowRight'&&idx<TABS_ORDER.length-1) switchTab(TABS_ORDER[idx+1]);
+    });
+    var resultsEl=document.getElementById('results');
+    if(resultsEl){
+      var touchStartX=0,touchStartY=0;
+      resultsEl.addEventListener('touchstart',function(e){touchStartX=e.touches[0].clientX;touchStartY=e.touches[0].clientY;},{passive:true});
+      resultsEl.addEventListener('touchend',function(e){
+        var dx=e.changedTouches[0].clientX-touchStartX;
+        var dy=e.changedTouches[0].clientY-touchStartY;
+        if(Math.abs(dx)<60||Math.abs(dy)>Math.abs(dx)*0.8) return;
+        var idx2=TABS_ORDER.indexOf(_activeTab);
+        if(dx<0&&idx2<TABS_ORDER.length-1) switchTab(TABS_ORDER[idx2+1]);
+        if(dx>0&&idx2>0) switchTab(TABS_ORDER[idx2-1]);
+      },{passive:true});
+    }
   }
   document.querySelectorAll('.num-card').forEach(function(card){
     var tabs=card.querySelectorAll('.section-tab');
@@ -436,6 +440,7 @@ function renderComplementar(data){
   return html;
 }
 function renderPrevisoes(data){
+  // Tab de previsoes — exibe os mesmos dados de presente (periodicidade pessoal)
   return renderPresente(data);
 }
 var _cardCounter = 0;

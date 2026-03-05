@@ -1,33 +1,19 @@
 // app.js — Entry point. Orquestra todos os modulos.
-// Dependencias: engine.js, render.js, data/i18n.pt.js, data/texts.pt.js
+// Dependencias: engine.js, render.js, data/i18n.pt.js
 
 import {
-  PYT, VOWELS, MASTERS, KARMIC,
   calcName, calcDate, calcPower, calcPythTable,
   calcCycles, calcPinnacles, calcChallenges,
   calcProjection, calcTrimestres, calcAge,
   calcElements, calcPriority, calcKarmicLessons,
   calcCornerstone, calcCapstone, calcFirstVowel,
   calcBalance, calcRational, calcSubconscious,
-  calcHiddenPassion, calcBridges, calcPlanes, calcPersonalDay, formatDob, getInitials, normalize, reduceNum
+  calcHiddenPassion, calcBridges, calcPlanes, calcPersonalDay
 } from './engine.js';
 
-import {
-  renderResults,
-  renderNumStrip, renderMandala,
-  renderIdentidade, renderJornada, renderPresente,
-  renderRadar, renderPadroes, renderComplementar, renderPrevisoes,
-  buildBlock, buildCard, buildSectionHead, buildSimpleTile,
-  buildLetterTile, buildBridgeRow,
-  attachTabEvents, attachCardEvents,
-  escH, renderNameBreakdown,
-  showSobre, hideSobre, renderSobre
-} from './render.js';
+import { renderResults, showSobre, hideSobre } from './render.js';
 
 import { t } from './data/i18n.pt.js';
-import { TEXTS } from './data/texts.pt.js';
-
-// (window assignments moved to bottom — ver secao INIT)
 
 /* ════════════════════════════════════════════════
    THEME
@@ -45,7 +31,7 @@ function toggleTheme(){
 }
 
 /* ════════════════════════════════════════════════
-   DATE FIELD HELPERS (já incluídos)
+   DATE FIELD HELPERS
 ════════════════════════════════════════════════ */
 function daysInMonth(m, y){
   if(m===2){
@@ -100,102 +86,16 @@ function setupDateListeners(){
       }
       clearDateErrors();
     });
-    el.addEventListener('keyup', function(){
-      var v = this.value;
-      if(id === 'inputDay'   && v.length === 2) document.getElementById('inputMonth').focus();
-      if(id === 'inputMonth' && v.length === 2) document.getElementById('inputYear').focus();
-    });
   });
-}
-
-function setupDateAutoAdvance() {
-  var dayInput = document.getElementById('inputDay');
+  // Auto-advance focus between date fields
+  var dayInput   = document.getElementById('inputDay');
   var monthInput = document.getElementById('inputMonth');
-  var yearInput = document.getElementById('inputYear');
-  var calcBtn = document.getElementById('calcBtn');
-  
-  if(dayInput) {
-    dayInput.addEventListener('input', function(e) {
-      if(this.value.length === 2 && monthInput) monthInput.focus();
-    });
-  }
-  if(monthInput) {
-    monthInput.addEventListener('input', function(e) {
-      if(this.value.length === 2 && yearInput) yearInput.focus();
-    });
-  }
-  if(yearInput) {
-    yearInput.addEventListener('input', function(e) {
-      if(this.value.length === 4 && calcBtn) calcBtn.focus();
-    });
-  }
+  var yearInput  = document.getElementById('inputYear');
+  var calcBtn    = document.getElementById('calcBtn');
+  if(dayInput)   dayInput.addEventListener('input',   function(){ if(this.value.length===2 && monthInput) monthInput.focus(); });
+  if(monthInput) monthInput.addEventListener('input', function(){ if(this.value.length===2 && yearInput)  yearInput.focus(); });
+  if(yearInput)  yearInput.addEventListener('input',  function(){ if(this.value.length===4 && calcBtn)    calcBtn.focus(); });
 }
-
-function validate(){ return parseDateFields(); }
-
-function calculate(){
-  var name = document.getElementById('inputName').value.trim();
-  if(!name){ alert(t('errName')); return; }
-  var dob = parseDateFields();
-  if(!dob) return;
-  var nameCalc = calcName(name);
-  var dateCalc = calcDate(dob);
-  var powerR   = calcPower(nameCalc.expression.final, dateCalc.lifepath.final);
-  var lp = dateCalc.lifepath.final;
-  var pythTable = calcPythTable(name);
-  var data = {
-    name: name, dob: dob, nameCalc: nameCalc, dateCalc: dateCalc, powerR: powerR,
-    cycles:     calcCycles(dob, lp),
-    pinnacles:  calcPinnacles(dob, lp),
-    challenges: calcChallenges(dob),
-    projection: calcProjection(dob),
-    trimestres: calcTrimestres(dob),
-    age:        calcAge(dob),
-    elements:   calcElements(name),
-    pythTable:  pythTable,
-    priority:   calcPriority(pythTable),
-    karmicLessons: calcKarmicLessons(pythTable),
-    cornerstone:   calcCornerstone(name),
-    capstone:      calcCapstone(name),
-    firstVowel:    calcFirstVowel(name),
-    balance:       calcBalance(name),
-    rational:      calcRational(name, dob),
-    subconscious:  calcSubconscious(calcKarmicLessons(pythTable)),
-    hiddenPassion: calcHiddenPassion(pythTable),
-    bridges:       calcBridges(nameCalc.motivation.final, nameCalc.expression.final, dateCalc.lifepath.final, nameCalc.impression.final),
-    planes:        calcPlanes(name),
-    personalDay:   calcPersonalDay(dob)
-  };
-  window._lastCalc = data;
-  renderResults(data);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* ════════════════════════════════════════════════
-   INIT
-════════════════════════════════════════════════ */
-
-// Expose to inline HTML onclick handlers (ES Modules têm escopo proprio —
-// funcoes nao ficam em window automaticamente)
-window.calculate   = calculate;
-window.showSobre   = showSobre;
-window.hideSobre   = hideSobre;
-window.toggleTheme = toggleTheme;
 
 function parseDateFields(){
   var dayEl   = document.getElementById('inputDay');
@@ -235,19 +135,71 @@ function parseDateFields(){
   return y+'-'+mm+'-'+dd;
 }
 
+/* ════════════════════════════════════════════════
+   CALCULATE
+════════════════════════════════════════════════ */
+function calculate(){
+  var name = document.getElementById('inputName').value.trim();
+  if(!name){ alert(t('errName')); return; }
+  var dob = parseDateFields();
+  if(!dob) return;
+  var nameCalc = calcName(name);
+  var dateCalc = calcDate(dob);
+  var powerR   = calcPower(nameCalc.expression.final, dateCalc.lifepath.final);
+  var lp = dateCalc.lifepath.final;
+  var pythTable = calcPythTable(name);
+  var data = {
+    name: name, dob: dob, nameCalc: nameCalc, dateCalc: dateCalc, powerR: powerR,
+    cycles:        calcCycles(dob, lp),
+    pinnacles:     calcPinnacles(dob, lp),
+    challenges:    calcChallenges(dob),
+    projection:    calcProjection(dob),
+    trimestres:    calcTrimestres(dob),
+    age:           calcAge(dob),
+    elements:      calcElements(name),
+    pythTable:     pythTable,
+    priority:      calcPriority(pythTable),
+    karmicLessons: calcKarmicLessons(pythTable),
+    cornerstone:   calcCornerstone(name),
+    capstone:      calcCapstone(name),
+    firstVowel:    calcFirstVowel(name),
+    balance:       calcBalance(name),
+    rational:      calcRational(name, dob),
+    subconscious:  calcSubconscious(calcKarmicLessons(pythTable)),
+    hiddenPassion: calcHiddenPassion(pythTable),
+    bridges:       calcBridges(nameCalc.motivation.final, nameCalc.expression.final, dateCalc.lifepath.final, nameCalc.impression.final),
+    planes:        calcPlanes(name),
+    personalDay:   calcPersonalDay(dob)
+  };
+  window._lastCalc = data;
+  renderResults(data);
+}
+
+/* ════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════ */
+
+// Expose to inline HTML onclick handlers
+// (ES Modules têm escopo próprio — funções não ficam em window automaticamente)
+window.calculate   = calculate;
+window.showSobre   = showSobre;
+window.hideSobre   = hideSobre;
+window.toggleTheme = toggleTheme;
+
 (function(){
   var savedTheme = null;
   try{ savedTheme = localStorage.getItem('um23-theme'); }catch(e){}
   applyTheme(savedTheme || 'dark');
 
   setupDateListeners();
-  setupDateAutoAdvance();
-  document.addEventListener('keydown',function(e){
-    if(e.key==='Enter'){
-      var active=document.activeElement;
-      if(active&&(active.id==='inputName'||active.id==='inputDay'||active.id==='inputMonth'||active.id==='inputYear')) calculate();
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){
+      var active = document.activeElement;
+      if(active && (active.id==='inputName' || active.id==='inputDay' || active.id==='inputMonth' || active.id==='inputYear')) calculate();
     }
   });
-  var nameInput=document.getElementById('inputName');
-  if(nameInput) setTimeout(function(){nameInput.focus();},100);
+
+  var nameInput = document.getElementById('inputName');
+  if(nameInput) setTimeout(function(){ nameInput.focus(); }, 100);
 })();

@@ -1,5 +1,7 @@
 // engine.js — Calculos numerologicos puros
-// Sem dependencias de DOM. Importado por render.js e app.js.
+// Dependencias: i18n.pt.js (labels de ciclos, pináculos e desafios)
+
+import { t } from './data/i18n.pt.js';
 
 /* ════════════════════════════════════════════════
    NUMEROLOGY ENGINE
