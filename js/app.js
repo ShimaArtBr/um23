@@ -18,145 +18,161 @@ import { t } from './data/i18n.pt.js';
 /* ════════════════════════════════════════════════
    THEME
 ════════════════════════════════════════════════ */
-function applyTheme(th){
+function applyTheme(th) {
   document.documentElement.setAttribute('data-theme', th);
 
-  // Update toggle button emoji
   var btn = document.getElementById('themeBtn');
-  if(btn) btn.textContent = th==='dark' ? '☀️' : '🌙';
+  if (btn) btn.textContent = th === 'dark' ? '☀️' : '🌙';
 
-  // Update dynamic theme-color meta (used by PWA standalone chrome bar)
+  // FIX: usar setAttribute em vez de .content para garantir compatibilidade
   var meta = document.getElementById('metaTheme');
-  if(meta) meta.content = th==='dark' ? '#0b0a0a' : '#f5f2ea';
+  if (meta) meta.setAttribute('content', th === 'dark' ? '#0b0a0a' : '#f5f2ea');
 
-  // Persist choice
-  try{ localStorage.setItem('um23-theme', th); }catch(e){}
+  try { localStorage.setItem('um23-theme', th); } catch (e) {}
 }
-function toggleTheme(){
+
+function toggleTheme() {
   var cur = document.documentElement.getAttribute('data-theme');
-  applyTheme(cur==='dark' ? 'light' : 'dark');
+  applyTheme(cur === 'dark' ? 'light' : 'dark');
 }
 
 /* ════════════════════════════════════════════════
    DATE FIELD HELPERS
 ════════════════════════════════════════════════ */
-function daysInMonth(m, y){
-  if(m===2){
-    var leap = (y%4===0 && (y%100!==0 || y%400===0));
+function daysInMonth(m, y) {
+  if (m === 2) {
+    var leap = (y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0));
     return leap ? 29 : 28;
   }
-  return [31,28,31,30,31,30,31,31,30,31,30,31][m-1];
+  return [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1];
 }
 
-function setDateError(msg){
+function setDateError(msg) {
   var el = document.getElementById('dateError');
-  if(el) el.textContent = msg || '';
+  if (el) el.textContent = msg || '';
 }
 
-function clearDateErrors(){
+function clearDateErrors() {
   setDateError('');
-  ['inputDay','inputMonth','inputYear'].forEach(function(id){
+  ['inputDay', 'inputMonth', 'inputYear'].forEach(function (id) {
     var el = document.getElementById(id);
-    if(el) el.classList.remove('input-error');
+    if (el) el.classList.remove('input-error');
   });
 }
 
-function setupDateListeners(){
-  ['inputDay','inputMonth','inputYear'].forEach(function(id){
+function setupDateListeners() {
+  ['inputDay', 'inputMonth', 'inputYear'].forEach(function (id) {
     var el = document.getElementById(id);
-    if(!el) return;
-    el.addEventListener('input', function(){
+    if (!el) return;
+
+    // Bloquear caracteres não-numéricos
+    el.addEventListener('keypress', function (e) {
+      if (!/[0-9]/.test(e.key)) e.preventDefault();
+    });
+
+    el.addEventListener('input', function () {
+      // FIX CRÍTICO: variável 'v' era usada antes de ser declarada na versão anterior
       var v = parseInt(this.value, 10);
-      if(id === 'inputMonth' && !isNaN(v)){
-        if(v > 12) this.value = 12;
-        if(v < 0)  this.value = '';
+      this.value = this.value.replace(/[^0-9]/g, '');
+
+      if (id === 'inputMonth' && !isNaN(v)) {
+        if (v > 12) this.value = 12;
+        if (v < 0)  this.value = '';
       }
-      if(id === 'inputDay' && !isNaN(v)){
+      if (id === 'inputDay' && !isNaN(v)) {
         var m = parseInt(document.getElementById('inputMonth').value, 10);
         var y = parseInt(document.getElementById('inputYear').value, 10);
-        var max = (m>=1 && m<=12 && y>=1900) ? daysInMonth(m,y) : 31;
-        if(v > max) this.value = max;
-        if(v < 0)   this.value = '';
+        var max = (m >= 1 && m <= 12 && y >= 1900) ? daysInMonth(m, y) : 31;
+        if (v > max) this.value = max;
+        if (v < 0)   this.value = '';
       }
-      if(id === 'inputYear' && !isNaN(v)){
-        if(v > 2100) this.value = 2100;
+      if (id === 'inputYear' && !isNaN(v)) {
+        if (v > 2100) this.value = 2100;
       }
-      if(id === 'inputMonth' || id === 'inputYear'){
+      if (id === 'inputMonth' || id === 'inputYear') {
         var dEl = document.getElementById('inputDay');
-        var d = parseInt(dEl.value, 10);
-        var m2 = parseInt(document.getElementById('inputMonth').value, 10);
-        var y2 = parseInt(document.getElementById('inputYear').value, 10);
-        if(!isNaN(d) && d > 0 && m2>=1 && m2<=12 && y2>=1900){
+        var d   = parseInt(dEl.value, 10);
+        var m2  = parseInt(document.getElementById('inputMonth').value, 10);
+        var y2  = parseInt(document.getElementById('inputYear').value, 10);
+        if (!isNaN(d) && d > 0 && m2 >= 1 && m2 <= 12 && y2 >= 1900) {
           var maxD = daysInMonth(m2, y2);
-          if(d > maxD){ dEl.value = maxD; }
+          if (d > maxD) { dEl.value = maxD; }
         }
       }
       clearDateErrors();
     });
   });
-  // Auto-advance focus between date fields
+
+  // Auto-advance foco entre campos de data
   var dayInput   = document.getElementById('inputDay');
   var monthInput = document.getElementById('inputMonth');
   var yearInput  = document.getElementById('inputYear');
   var calcBtn    = document.getElementById('calcBtn');
-  if(dayInput)   dayInput.addEventListener('input',   function(){ if(this.value.length===2 && monthInput) monthInput.focus(); });
-  if(monthInput) monthInput.addEventListener('input', function(){ if(this.value.length===2 && yearInput)  yearInput.focus(); });
-  if(yearInput)  yearInput.addEventListener('input',  function(){ if(this.value.length===4 && calcBtn)    calcBtn.focus(); });
+
+  if (dayInput)   dayInput.addEventListener('input',   function () { if (this.value.length === 2 && monthInput) monthInput.focus(); });
+  if (monthInput) monthInput.addEventListener('input', function () { if (this.value.length === 2 && yearInput)  yearInput.focus(); });
+  if (yearInput)  yearInput.addEventListener('input',  function () { if (this.value.length === 4 && calcBtn)    calcBtn.focus(); });
 }
 
-function parseDateFields(){
-  var dayEl   = document.getElementById('inputDay');
-  var monEl   = document.getElementById('inputMonth');
-  var yrEl    = document.getElementById('inputYear');
+function parseDateFields() {
+  var dayEl = document.getElementById('inputDay');
+  var monEl = document.getElementById('inputMonth');
+  var yrEl  = document.getElementById('inputYear');
   var d = parseInt(dayEl.value, 10);
   var m = parseInt(monEl.value, 10);
-  var y = parseInt(yrEl.value,  10);
+  var y = parseInt(yrEl.value, 10);
   clearDateErrors();
   var valid = true;
 
-  if(isNaN(m) || m < 1 || m > 12){
+  if (isNaN(m) || m < 1 || m > 12) {
     monEl.classList.add('input-error');
     setDateError(t('errMonth'));
     valid = false;
   }
-  if(isNaN(y) || y < 1900 || y > 2100){
+  if (isNaN(y) || y < 1900 || y > 2100) {
     yrEl.classList.add('input-error');
-    if(valid) setDateError(t('errYear'));
+    if (valid) setDateError(t('errYear'));
     valid = false;
   }
-  if(!isNaN(m) && m >= 1 && m <= 12 && !isNaN(y) && y >= 1900){
+  if (!isNaN(m) && m >= 1 && m <= 12 && !isNaN(y) && y >= 1900) {
     var maxD = daysInMonth(m, y);
-    if(isNaN(d) || d < 1 || d > maxD){
+    if (isNaN(d) || d < 1 || d > maxD) {
       dayEl.classList.add('input-error');
-      if(valid) setDateError(d > maxD ? t('errDayMax') : t('errDay'));
+      if (valid) setDateError(d > maxD ? t('errDayMax') : t('errDay'));
       valid = false;
     }
-  } else if(isNaN(d) || d < 1 || d > 31){
+  } else if (isNaN(d) || d < 1 || d > 31) {
     dayEl.classList.add('input-error');
-    if(valid) setDateError(t('errDay'));
+    if (valid) setDateError(t('errDay'));
     valid = false;
   }
-  if(!valid) return null;
-  var mm = m < 10 ? '0'+m : String(m);
-  var dd = d < 10 ? '0'+d : String(d);
-  return y+'-'+mm+'-'+dd;
+  if (!valid) return null;
+  var mm = m < 10 ? '0' + m : String(m);
+  var dd = d < 10 ? '0' + d : String(d);
+  return y + '-' + mm + '-' + dd;
 }
 
 /* ════════════════════════════════════════════════
    CALCULATE
 ════════════════════════════════════════════════ */
-function calculate(){
+function calculate() {
   var name = document.getElementById('inputName').value.trim();
-  if(!name){ alert(t('errName')); return; }
+  if (!name) { alert(t('errName')); return; }
   var dob = parseDateFields();
-  if(!dob) return;
-  var nameCalc = calcName(name);
-  var dateCalc = calcDate(dob);
-  var powerR   = calcPower(nameCalc.expression.final, dateCalc.lifepath.final);
-  var lp = dateCalc.lifepath.final;
+  if (!dob) return;
+
+  var nameCalc  = calcName(name);
+  var dateCalc  = calcDate(dob);
+  var powerR    = calcPower(nameCalc.expression.final, dateCalc.lifepath.final);
+  var lp        = dateCalc.lifepath.final;
   var pythTable = calcPythTable(name);
+
   var data = {
-    name: name, dob: dob, nameCalc: nameCalc, dateCalc: dateCalc, powerR: powerR,
+    name:          name,
+    dob:           dob,
+    nameCalc:      nameCalc,
+    dateCalc:      dateCalc,
+    powerR:        powerR,
     cycles:        calcCycles(dob, lp),
     pinnacles:     calcPinnacles(dob, lp),
     challenges:    calcChallenges(dob),
@@ -174,10 +190,16 @@ function calculate(){
     rational:      calcRational(name, dob),
     subconscious:  calcSubconscious(calcKarmicLessons(pythTable)),
     hiddenPassion: calcHiddenPassion(pythTable),
-    bridges:       calcBridges(nameCalc.motivation.final, nameCalc.expression.final, dateCalc.lifepath.final, nameCalc.impression.final),
+    bridges:       calcBridges(
+                     nameCalc.motivation.final,
+                     nameCalc.expression.final,
+                     dateCalc.lifepath.final,
+                     nameCalc.impression.final
+                   ),
     planes:        calcPlanes(name),
     personalDay:   calcPersonalDay(dob)
   };
+
   window._lastCalc = data;
   renderResults(data);
 }
@@ -186,27 +208,36 @@ function calculate(){
    INIT
 ════════════════════════════════════════════════ */
 
-// Expose to inline HTML onclick handlers
-// (ES Modules têm escopo próprio — funções não ficam em window automaticamente)
+// Expõe funções ao escopo global para os onclick inline do HTML
+// ES Modules têm escopo próprio — funções não ficam em window automaticamente
 window.calculate   = calculate;
 window.showSobre   = showSobre;
 window.hideSobre   = hideSobre;
 window.toggleTheme = toggleTheme;
 
-(function(){
+(function () {
   var savedTheme = null;
-  try{ savedTheme = localStorage.getItem('um23-theme'); }catch(e){}
+  try { savedTheme = localStorage.getItem('um23-theme'); } catch (e) {}
   applyTheme(savedTheme || 'dark');
 
   setupDateListeners();
 
-  document.addEventListener('keydown', function(e){
-    if(e.key === 'Enter'){
+  // Enter em qualquer campo de input dispara o cálculo
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
       var active = document.activeElement;
-      if(active && (active.id==='inputName' || active.id==='inputDay' || active.id==='inputMonth' || active.id==='inputYear')) calculate();
+      if (active && (
+        active.id === 'inputName'  ||
+        active.id === 'inputDay'   ||
+        active.id === 'inputMonth' ||
+        active.id === 'inputYear'
+      )) {
+        calculate();
+      }
     }
   });
 
+  // Foco automático no campo nome ao carregar
   var nameInput = document.getElementById('inputName');
-  if(nameInput) setTimeout(function(){ nameInput.focus(); }, 100);
+  if (nameInput) setTimeout(function () { nameInput.focus(); }, 100);
 })();
