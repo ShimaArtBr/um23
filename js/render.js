@@ -32,6 +32,9 @@ import { PINNACLE_TEXTS, CHALLENGE_TEXTS } from './data/pinnacles_pt.js';
 // ── patch: karmicLessons_patch (C8) ──
 import { KARMIC_LESSON_TEXTS, KARMIC_MULTIPLE_NOTE } from './data/karmicLessons_pt.js';
 
+// ── patch: personalForecast_patch (C9) ──
+import { PERSONAL_YEAR_TEXTS, PERSONAL_MONTH_TEXTS, PERSONAL_DAY_NOTE } from './data/personalForecast_pt.js';
+
 /* ════════════════════════════════════════════════
    RENDER ENGINE
 ════════════════════════════════════════════════ */
@@ -735,15 +738,17 @@ function buildChallengeReading(challenges, pinnacles, age) {
 
 function renderPresente(data){
   var html='', pd=data.personalDay;
+
+  // ── ANO PESSOAL ──
   html+=buildSectionHead(t('secPersonalYear'),'dot-date');
   html+='<div class="tiles-grid cols2 mb20">';
   html+=buildSimpleTile(pd.year,t('labelPersonalYear'),String(pd.todayYear),'highlight');
   html+=buildSimpleTile(pd.month,'Mês Pessoal','','');
   html+='</div>';
-  html+=buildSectionHead(t('secPersonalDay'),'dot-date');
-  html+='<div class="tiles-grid mb20">';
-  html+=buildSimpleTile(pd.day,t('personalDayLabel'),t('personalDayToday'),'highlight');
-  html+='</div>';
+  // patch C9 — leitura do Ano Pessoal
+  html += buildPersonalYearReading(pd.year.final);
+
+  // ── MÊS PESSOAL ──
   html+=buildSectionHead(t('secPersonalMonths'),'dot-date');
   var mNames=t('monthNames').split(',');
   html+='<div class="months-grid mb20">';
@@ -757,6 +762,17 @@ function renderPresente(data){
     html+='</div>';
   });
   html+='</div>';
+  // patch C9 — leitura do Mês Pessoal atual
+  html += buildPersonalMonthReading(pd.month.final, pd.todayMonth, mNames);
+
+  // ── DIA PESSOAL ──
+  html+=buildSectionHead(t('secPersonalDay'),'dot-date');
+  html+='<div class="tiles-grid mb20">';
+  html+=buildSimpleTile(pd.day,t('personalDayLabel'),t('personalDayToday'),'highlight');
+  html+='</div>';
+  // patch C9 — nota contextual do Dia Pessoal
+  html += buildPersonalDayNote(pd.day.final);
+
   return html;
 }
 function renderRadar(data){
@@ -926,13 +942,23 @@ function renderPrevisoes(data){
   var yyyy = String(curYr);
   var todayStr = dd+'/'+mm+'/'+yyyy;
 
-  // ── 1. DIA PESSOAL — âncora do momento presente na previsão ──
+  // ── 1. ANO PESSOAL — leitura do ano corrente ──
+  html += buildSectionHead(t('secPersonalYear'),'dot-date');
+  html += '<div class="tiles-grid mb20">';
+  html += buildSimpleTile(pd.year, t('labelPersonalYear'), String(curYr), 'highlight');
+  html += '</div>';
+  // patch C9 — leitura do Ano Pessoal (aba Previsões)
+  html += buildPersonalYearReading(pd.year.final);
+
+  // ── 2. DIA PESSOAL — âncora do momento presente ──
   html += buildSectionHead(t('secPersonalDay'),'dot-date');
   html += '<div class="tiles-grid mb20">';
   html += buildSimpleTile(pd.day, t('personalDayLabel'), todayStr, 'highlight');
   html += '</div>';
+  // patch C9 — nota do Dia Pessoal
+  html += buildPersonalDayNote(pd.day.final);
 
-  // ── 2. PROJEÇÃO 9 ANOS ──
+  // ── 3. PROJEÇÃO 9 ANOS ──
   html += buildSectionHead(t('secProjection'),'dot-master');
   html += '<div class="projection-wrap mb20">';
   html += '<div class="projection-title">'+escH(t('yearLabel'))+' \u00b7 '+escH(t('numberLabel'))+'</div>';
@@ -954,7 +980,7 @@ function renderPrevisoes(data){
   });
   html += '</div>';
 
-  // ── 3. MESES DO ANO CORRENTE ──
+  // ── 4. MESES DO ANO CORRENTE ──
   html += buildSectionHead(t('secPersonalMonths'),'dot-date');
   var mNames = t('monthNames').split(',');
   html += '<div class="months-grid mb20">';
@@ -969,9 +995,76 @@ function renderPrevisoes(data){
     html += '</div>';
   });
   html += '</div>';
+  // patch C9 — leitura do Mês Pessoal atual (aba Previsões)
+  html += buildPersonalMonthReading(pd.month.final, pd.todayMonth, mNames);
 
   return html;
 }
+/* ════════════════════════════════════════════════════════
+   patch C9 — helpers de previsão pessoal
+   buildPersonalYearReading() · buildPersonalMonthReading() · buildPersonalDayNote()
+════════════════════════════════════════════════════════ */
+
+function buildPersonalYearReading(yearNum) {
+  var entry = PERSONAL_YEAR_TEXTS[yearNum];
+  if (!entry) return '';
+
+  // entry = { theme, areas, guidance }
+  var theme    = entry.theme    || '';
+  var areas    = entry.areas    || '';
+  var guidance = entry.guidance || '';
+
+  var html = '';
+  html += '<div class="forecast-reading mb20">';
+  html += '<div class="forecast-reading-header">';
+  html += '<span class="forecast-reading-num' + (MASTERS[yearNum] ? ' is-master' : '') + '">' + yearNum + '</span>';
+  html += '<div class="forecast-reading-meta">';
+  html += '<span class="forecast-reading-label">Ano Pessoal ' + yearNum + '</span>';
+  html += '<span class="forecast-reading-sub">Tema central deste ciclo de 12 meses</span>';
+  html += '</div>';
+  html += '</div>';
+
+  html += '<details class="essence-details forecast-details" open>';
+  html += '<summary class="essence-summary">Ler este ano</summary>';
+  html += '<div class="essence-body forecast-body">';
+  if (theme)    html += '<p class="forecast-p forecast-theme">'    + escH(theme)    + '</p>';
+  if (areas)    html += '<p class="forecast-p forecast-areas">'    + escH(areas)    + '</p>';
+  if (guidance) html += '<p class="forecast-p forecast-guidance">' + escH(guidance) + '</p>';
+  html += '</div></details>';
+  html += '</div>';
+
+  return html;
+}
+
+function buildPersonalMonthReading(monthNum, todayMonthIdx, mNames) {
+  var text = PERSONAL_MONTH_TEXTS[monthNum];
+  if (!text) return '';
+  var mLabel = mNames ? (mNames[todayMonthIdx - 1] || '') : '';
+
+  var html = '';
+  html += '<div class="forecast-month-reading mb20">';
+  html += '<div class="forecast-month-header">';
+  html += '<span class="forecast-month-num' + (MASTERS[monthNum] ? ' is-master' : '') + '">' + monthNum + '</span>';
+  html += '<div class="forecast-reading-meta">';
+  html += '<span class="forecast-reading-label">Mês Pessoal ' + monthNum + (mLabel ? ' · ' + escH(mLabel) : '') + '</span>';
+  html += '<span class="forecast-reading-sub">Orientação para este período</span>';
+  html += '</div>';
+  html += '</div>';
+  html += '<div class="forecast-month-body">' + escH(text) + '</div>';
+  html += '</div>';
+
+  return html;
+}
+
+function buildPersonalDayNote(dayNum) {
+  var html = '';
+  html += '<div class="forecast-day-note mb20">';
+  html += '<div class="forecast-day-note-num' + (MASTERS[dayNum] ? ' is-master' : '') + '">' + dayNum + '</div>';
+  html += '<p class="forecast-day-note-text">' + escH(PERSONAL_DAY_NOTE) + '</p>';
+  html += '</div>';
+  return html;
+}
+
 var _cardCounter = 0;
 function buildBlock(label, dotClass, cards, layoutClass){
   return buildSectionHead(label,dotClass)+'<div class="cards-grid '+(layoutClass||'')+'">'+cards.join('')+'</div>';

@@ -32,7 +32,8 @@ var CORE  = [
   '/js/data/cycles.pt.js',
   '/js/data/hiddenPassion.pt.js',
   '/js/data/pinnacles_pt.js',
-  '/js/data/karmicLessons_pt.js'
+  '/js/data/karmicLessons_pt.js',
+  '/js/data/personalForecast_pt.js'
 ];
 
 self.addEventListener('install', function(e) {

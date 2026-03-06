@@ -363,3 +363,105 @@ details[open] .kl-badge-arrow { transform: rotate(180deg); }
 @media (max-width: 480px) {
   .kl-body { padding-left: 20px; }
 }
+
+/* ═══ FORECAST READINGS (C9) ═══ */
+/* Ano Pessoal */
+.forecast-reading,
+.forecast-month-reading {
+  background: var(--panel);
+  border: 1px solid var(--bg-gold);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.forecast-reading-header,
+.forecast-month-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--bg-gold);
+  background: rgba(201,168,76,.03);
+}
+.forecast-reading-num,
+.forecast-month-num {
+  font-family: 'PT Serif', serif;
+  font-size: 2.2rem;
+  color: var(--gold-dim);
+  line-height: 1;
+  width: 44px;
+  flex-shrink: 0;
+  text-align: center;
+}
+.forecast-reading-num.is-master,
+.forecast-month-num.is-master { color: var(--gold); }
+.forecast-reading-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.forecast-reading-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .60rem;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.forecast-reading-sub {
+  font-size: .76rem;
+  color: var(--muted);
+  font-weight: 300;
+}
+/* Corpo dos parágrafos do Ano Pessoal */
+.forecast-body { display: flex; flex-direction: column; gap: 10px; }
+.forecast-p {
+  font-size: .83rem;
+  line-height: 1.8;
+  color: var(--muted);
+  font-weight: 300;
+  margin: 0;
+}
+.forecast-guidance {
+  padding: 10px 14px;
+  background: rgba(201,168,76,.04);
+  border-left: 2px solid rgba(201,168,76,.28);
+  border-radius: 0 var(--r) var(--r) 0;
+  font-size: .80rem;
+  color: var(--text);
+}
+/* Mês Pessoal — sem details, sempre visível */
+.forecast-month-body {
+  padding: 12px 18px 14px;
+  font-size: .83rem;
+  line-height: 1.78;
+  color: var(--muted);
+  font-weight: 300;
+}
+/* Dia Pessoal — nota compacta */
+.forecast-day-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--panel);
+  border: 1px solid var(--bg-gold);
+  border-radius: var(--r-lg);
+  padding: 14px 18px;
+}
+.forecast-day-note-num {
+  font-family: 'PT Serif', serif;
+  font-size: 2.2rem;
+  color: var(--gold-dim);
+  line-height: 1;
+  width: 44px;
+  flex-shrink: 0;
+  text-align: center;
+  padding-top: 2px;
+}
+.forecast-day-note-num.is-master { color: var(--gold); }
+.forecast-day-note-text {
+  font-size: .80rem;
+  line-height: 1.75;
+  color: var(--muted);
+  font-weight: 300;
+  margin: 0;
+  padding-top: 4px;
+}
