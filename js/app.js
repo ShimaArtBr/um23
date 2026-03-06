@@ -20,14 +20,21 @@ import { t } from './data/i18n.pt.js';
 ════════════════════════════════════════════════ */
 function applyTheme(th){
   document.documentElement.setAttribute('data-theme', th);
-  document.getElementById('themeBtn').textContent = th==='dark' ? '☀️' : '🌙';
-  document.getElementById('metaTheme').content = th==='dark' ? '#0b0a0a' : '#f5f2ea';
+
+  // Update toggle button emoji
+  var btn = document.getElementById('themeBtn');
+  if(btn) btn.textContent = th==='dark' ? '☀️' : '🌙';
+
+  // Update dynamic theme-color meta (used by PWA standalone chrome bar)
+  var meta = document.getElementById('metaTheme');
+  if(meta) meta.content = th==='dark' ? '#0b0a0a' : '#f5f2ea';
+
+  // Persist choice
+  try{ localStorage.setItem('um23-theme', th); }catch(e){}
 }
 function toggleTheme(){
   var cur = document.documentElement.getAttribute('data-theme');
-  var next = cur==='dark' ? 'light' : 'dark';
-  applyTheme(next);
-  try{ localStorage.setItem('um23-theme', next); }catch(e){}
+  applyTheme(cur==='dark' ? 'light' : 'dark');
 }
 
 /* ════════════════════════════════════════════════

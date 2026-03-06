@@ -1,5 +1,126 @@
 // i18n.en.js — Interface strings (English)
-// TODO: translate from i18n.pt.js
+// Translated from i18n.pt.js — PT-BR → EN-US
+// Numerological terminology follows Campbell / Balliett canonical English
 
-var I18N_EN = {};
-export { I18N_EN };
+/* ════════════════════════════════════════════════
+   I18N_EN (English)
+════════════════════════════════════════════════ */
+var I18N_EN = {
+  brandSub:'PYTHAGOREAN NUMEROLOGY', panelTitle:'Your Chart', calcBtn:'CALCULATE MY CHART',
+  panelSub:'Your full name and date of birth reveal the numbers that guide your journey.',
+  labelName:'FULL NAME', labelDob:'DATE OF BIRTH', labelDay:'DAY', labelMonth:'MONTH', labelYear:'YEAR', phName:'AS REGISTERED AT BIRTH', phDob:'MM/DD/YYYY',
+  legendTitle:'CHART SECTIONS', legendName:'Derived from name', legendDate:'Derived from date',
+  legendMaster:'Master Number (11, 22, 33)', legendKarmic:'Karmic Number (13, 14, 16, 19)',
+  emptyTitle:'Your chart awaits', emptySub:'Enter your name and date of birth to reveal your numbers.',
+  blockName:'FROM THE NAME', blockDate:'FROM THE DATE', blockSynth:'SYNTHESIS',
+  roleMotivation:'Soul Urge · Inner Soul', roleImpression:'Personality · Outer Persona',
+  roleExpression:'Expression · Name Potential', roleLifepath:'Life Path · Mission',
+  roleDay:'Day Number · Innate Gift', roleAttitude:'Attitude Number · Response to the World',
+  rolePower:'Power Number · Maturity', roleMaster:'Master Number', roleKarmic:'Karmic Number',
+  tabEssence:'Essence', tabMotivation:'Soul Urge', tabImpression:'Personality',
+  tabExpression:'Expression', tabLifepath:'Life Path', tabDay:'Day', tabAttitude:'Attitude',
+  tabPower:'Power', tabShadow:'Shadow', tabPattern:'Pattern', tabManifestation:'Manifestation',
+  tabIntegration:'Integration',
+  masterBadge:'✦ MASTER', karmicBadge:'⚠ KARMIC',
+  errName:'Please enter your full name.', errDob:'Please enter your date of birth.',
+  errDay:'Invalid day.', errMonth:'Invalid month (1–12).', errYear:'Invalid year.',
+  errDayMax:'Invalid day for this month.',
+  tabIdentidade:'IDENTITY', tabJornada:'JOURNEY', tabPresente:'PRESENT', tabPadroes:'PATTERNS',
+  secCiclos:'LIFE CYCLES', secPinnacles:'PINNACLES', secDesafios:'CHALLENGES',
+  secPersonalYear:'PERSONAL YEAR', secProjection:'9-YEAR PROJECTION', secTrimestres:'QUARTERS',
+  secElements:'PLANES · ELEMENTS', secTable:'PYTHAGOREAN TABLE', secPriority:'NAME PRIORITIES',
+  secKarmicLessons:'KARMIC LESSONS',
+  labelC1:'Cycle 1', labelC2:'Cycle 2', labelC3:'Cycle 3',
+  labelP1:'Pinnacle 1', labelP2:'Pinnacle 2', labelP3:'Pinnacle 3', labelP4:'Pinnacle 4',
+  labelD1:'Challenge 1', labelD2:'Challenge 2', labelD3:'Challenge 3', labelD4:'Challenge 4',
+  labelPersonalYear:'Personal Year', labelCurrentYear:'CURRENT YEAR',
+  labelAge:'AGE', labelYears:'years',
+  labelFogo:'Fire', labelTerra:'Earth', labelAr:'Air', labelAgua:'Water',
+  labelDominant:'dominant',
+  labelNoKarmic:'None — all vibrations are present in the name.',
+  priorityLabel:'No.', priorityOccurrences:'x',
+  yearLabel:'Year', numberLabel:'No.',
+  trimQ1:'Jan–Mar', trimQ2:'Apr–Jun', trimQ3:'Jul–Sep', trimQ4:'Oct–Dec',
+  dobLabel:'Birth:',
+  masterNote:'This is a Master Number — it operates at an elevated vibration and carries the potential for spiritual development.',
+  karmicNote:'This is a Karmic Number — it indicates an energy pattern the soul has chosen to work with great intensity in this lifetime.',
+  secPedras:'KEYSTONES OF THE NAME', secPedrasDesc:'The key letters of the first name reveal how you begin, process, and conclude.',
+  labelCornerstone:'Cornerstone', labelCornerstoneSub:'How you begin',
+  labelCapstone:'Capstone', labelCapstoneSub:'How you conclude',
+  labelFirstVowel:'First Vowel', labelFirstVowelSub:'Instinctive emotional response',
+  secComplementar:'COMPLEMENTARY',
+  labelBalance:'Balance Number', labelBalanceSub:'Response in crisis',
+  labelRational:'Rational Thought', labelRationalSub:'Logic and reasoning',
+  labelSubconscious:'Subconscious Self', labelSubconsciousSub:'Inner strength',
+  secHiddenPassion:'HIDDEN PASSION', labelHiddenPassion:'Hidden Passion',
+  hiddenPassionDesc:'The most frequent vibration in the name — what moves from within.',
+  hiddenPassionNone:'Balanced frequencies — energy evenly distributed.',
+  secBridges:'BRIDGES', bridgesDesc:'Differences between core numbers — indicating adjustments needed to harmonize forces.',
+  bridgeMotExpr:'Soul Urge ↔ Expression', bridgeMotLP:'Soul Urge ↔ Life Path',
+  bridgeExprLP:'Expression ↔ Life Path', bridgeImpExpr:'Personality ↔ Expression',
+  secPlanes:'PLANES OF EXPRESSION', planesDesc:'How the energy of the letters is distributed across the four planes.',
+  planPhysical:'Physical', planEmotional:'Emotional', planMental:'Mental', planIntuitive:'Intuitive',
+  secPrevisoes:'FORECASTS',
+  secPersonalMonths:'PERSONAL MONTHS', secPersonalDay:'PERSONAL DAY',
+  personalDayLabel:'Personal Day', personalDayToday:'TODAY',
+  monthNames:'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec',
+  tabSobre:'ABOUT', sobreTitle:'About UM23', sobrePythagoras:'Pythagoras and Numerology',
+  sobrePythagorasText:'Pythagoras of Samos (c. 570–495 BC) was a Greek philosopher and mathematician who believed that numbers were the essence of all reality. To him, each number possessed its own vibration — a quality that transcended mere quantity. Modern Pythagorean numerology descends from this vision: the name and date of birth, converted into numbers, reveal patterns of personality, mission, and life cycles.',
+  sobreSources:'Sources and References',
+  sobreSourcesList:'L. Dow Balliett — The Philosophy of Numbers (1908); Florence Campbell — Your Days are Numbered (1931); Sepharial — The Kabala of Numbers (1913); Isidore Kozminsky — Numbers, their Meaning and Magic (1912). All interpretive texts were constructed from these public domain works.',
+  sobreAlphabet:'Pythagorean Alphabet',
+  sobreFormulas:'Chart Formulas',
+  sobreFormulaMotivation:'Soul Urge = sum of vowels in the name, reduced',
+  sobreFormulaImpression:'Personality Number = sum of consonants in the name, reduced',
+  sobreFormulaExpression:'Expression Number = sum of all letters in the name, reduced',
+  sobreFormulaLifepath:'Life Path = sum of all digits of the date of birth, reduced',
+  sobreFormulaDay:'Day Number = birth day, reduced',
+  sobreFormulaAttitude:'Attitude Number = day + month, reduced',
+  sobreFormulaPower:'Power Number = Expression + Life Path, reduced',
+  sobreFormulaBalance:'Balance Number = sum of initials of each name, reduced',
+  sobreFormulaRational:'Rational Thought = first letter of first name + birth day, reduced',
+  sobreFormulaSubconscious:'Subconscious Self = 9 minus the number of karmic lessons',
+  sobreFormulaCycles:'Cycles: C1=month, C2=day, C3=year sum. C1 duration = 36 minus base Life Path',
+  sobreFormulaPinnacles:'Pinnacles: P1=month+day, P2=day+year, P3=P1+P2, P4=month+year',
+  sobreFormulaChallenges:'Challenges: D1=|month−day|, D2=|day−year|, Flow=|D1−D2|',
+  sobreFormulaPersonalYear:'Personal Year = day + month + sum of digits of current year, reduced',
+  sobreFormulaPersonalMonth:'Personal Month = Personal Year + month (1–12), reduced',
+  sobreFormulaPersonalDay:'Personal Day = Personal Month + day of month, reduced',
+  sobreNote:'Master Numbers (11, 22, 33) preserved — Karmic Numbers (13, 14, 16, 19) detected before final reduction',
+  learnMore:'LEARN MORE',
+  formulaLabel:'FORMULA',
+  nameBreakdownTitle:'NAME ANALYSIS',
+  vowelsLabel:'VOWELS', consonantsLabel:'CONSONANTS', totalLabel:'TOTAL',
+  accentNote:'Accented letters are simplified: Ã→A, É→E, Ç→C, etc.',
+  descMotivation:'what the soul desires at its deepest level',
+  descImpression:'the first impression you make on others',
+  descExpression:'natural talents and potential of the full name',
+  descLifepath:'the central mission of this incarnation',
+  descDay:'innate gift present from birth',
+  descAttitude:'how you instinctively respond to the world',
+  descPower:'synthesis that emerges after maturity',
+  sobreFormulasTitle:'Mathematical Formulas',
+  sobreFormulasIntro:'All formulas used in the calculation of the numerological chart.',
+  sobreBalliettName:'L. Dow Balliett',
+  sobreBalliettDesc:'Pioneer of modern numerology. The Philosophy of Numbers (1908).',
+  sobreCampbellName:'Florence Campbell',
+  sobreCampbellDesc:'Systematized practical numerology. Your Days are Numbered (1931).',
+  sobreSepharialName:'Sepharial',
+  sobreSepharialDesc:'British astrologer and numerologist. The Kabala of Numbers (1913).',
+  sobreKozminskyName:'Isidore Kozminsky',
+  sobreKozminskyDesc:'Explored the symbolism of numbers. Numbers, their Meaning and Magic (1912).'
+};
+
+function t(k){ return I18N_EN[k] || k; }
+
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var k = el.getAttribute('data-i18n');
+    el.textContent = t(k);
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(function(el){
+    el.placeholder = t(el.getAttribute('data-i18n-ph'));
+  });
+}
+
+export { I18N_EN, t, applyI18n };

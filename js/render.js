@@ -440,8 +440,60 @@ function renderComplementar(data){
   return html;
 }
 function renderPrevisoes(data){
-  // Tab de previsoes — exibe os mesmos dados de presente (periodicidade pessoal)
-  return renderPresente(data);
+  var html = '';
+  var pd = data.personalDay;
+  var today = new Date();
+  var curYr = today.getFullYear();
+  var dd = String(today.getDate()).padStart(2,'0');
+  var mm = String(today.getMonth()+1).padStart(2,'0');
+  var yyyy = String(curYr);
+  var todayStr = dd+'/'+mm+'/'+yyyy;
+
+  // ── 1. DIA PESSOAL — âncora do momento presente na previsão ──
+  html += buildSectionHead(t('secPersonalDay'),'dot-date');
+  html += '<div class="tiles-grid mb20">';
+  html += buildSimpleTile(pd.day, t('personalDayLabel'), todayStr, 'highlight');
+  html += '</div>';
+
+  // ── 2. PROJEÇÃO 9 ANOS ──
+  html += buildSectionHead(t('secProjection'),'dot-master');
+  html += '<div class="projection-wrap mb20">';
+  html += '<div class="projection-title">'+escH(t('yearLabel'))+' \u00b7 '+escH(t('numberLabel'))+'</div>';
+  var projection = data.projection || [];
+  projection.forEach(function(p){
+    var isCur = (p.year === curYr);
+    var cls = 'projection-row'+(p.isMaster?' master':'')+(isCur?' current':'');
+    var barW = Math.min(Math.round(p.num/9*100), 100);
+    html += '<div class="'+cls+'">';
+    html += '<div class="proj-year">'+escH(String(p.year))+'</div>';
+    html += '<div class="proj-num">'+escH(String(p.num))+'</div>';
+    html += '<div class="proj-bar-track"><div class="proj-bar-fill" style="width:'+barW+'%"></div></div>';
+    if(isCur){
+      html += '<div class="proj-current-tag">'+escH(t('labelCurrentYear'))+'</div>';
+    } else if(p.isMaster){
+      html += '<div class="proj-current-tag">\u2736</div>';
+    }
+    html += '</div>';
+  });
+  html += '</div>';
+
+  // ── 3. MESES DO ANO CORRENTE ──
+  html += buildSectionHead(t('secPersonalMonths'),'dot-date');
+  var mNames = t('monthNames').split(',');
+  html += '<div class="months-grid mb20">';
+  var trimestres = data.trimestres || [];
+  trimestres.forEach(function(m){
+    var isCurrent = (m.month === pd.todayMonth);
+    var cls = 'month-tile'+(m.isMaster?' master':'')+(isCurrent?' current':'');
+    html += '<div class="'+cls+'">';
+    html += '<div class="month-name">'+escH(mNames[m.month-1]||String(m.month))+'</div>';
+    html += '<div class="month-num">'+escH(String(m.num))+'</div>';
+    if(m.isMaster) html += '<div class="month-tag">\u2736</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  return html;
 }
 var _cardCounter = 0;
 function buildBlock(label, dotClass, cards, layoutClass){
@@ -507,9 +559,9 @@ function buildNormalBody(n, calType){
   if(calType==='impression') sections.push({key:'impression', label:t('tabImpression'), content:texts.impression});
   if(calType==='expression') sections.push({key:'expression', label:t('tabExpression'), content:texts.expression});
   if(calType==='lifepath') sections.push({key:'lifepath', label:t('tabLifepath'), content:texts.lifepath});
-  if(calType==='day') sections.push({key:'day', label:t('tabDay'), content:texts.lifepath});
-  if(calType==='attitude') sections.push({key:'attitude', label:t('tabAttitude'), content:texts.motivation});
-  if(calType==='power') sections.push({key:'power', label:t('tabPower'), content:texts.expression});
+  if(calType==='day') sections.push({key:'day', label:t('tabDay'), content:texts.day});
+  if(calType==='attitude') sections.push({key:'attitude', label:t('tabAttitude'), content:texts.attitude});
+  if(calType==='power') sections.push({key:'power', label:t('tabPower'), content:texts.power});
   sections.push({key:'shadow', label:t('tabShadow'), content:texts.shadow, isShadow:true});
 
   var formulaKey = 'sobreFormula' + calType.charAt(0).toUpperCase() + calType.slice(1);
