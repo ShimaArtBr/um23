@@ -3,7 +3,7 @@
    Estrategia: cache-first · offline-ready
    Atualizado para arquitetura modular ES Modules
 ═══════════════════════════════════════════════════ */
-var CACHE = 'um23-v5';
+var CACHE = 'um23-v6';
 var CORE  = [
   '/',
   '/index.html',
@@ -30,10 +30,10 @@ var CORE  = [
   '/js/data/bridges.pt.js',
   '/js/data/planes.pt.js',
   '/js/data/cycles.pt.js',
-  '/js/data/hiddenPassion.pt.js',
+  '/js/data/hiddenPassion_pt.js',
   '/js/data/pinnacles_pt.js',
   '/js/data/karmicLessons_pt.js',
-  '/js/data/personalForecast_pt.js'
+  '/js/data/forecasts_pt.js'
 ];
 
 self.addEventListener('install', function(e) {
