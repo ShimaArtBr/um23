@@ -23,6 +23,9 @@ import { BRIDGE_SCALE, BRIDGE_CONTEXT } from './data/bridges.pt.js';
 // ── patch: planes_patch (C5) ──
 import { PLANE_DOMINANT, PLANE_LOW, PLANE_SPECIAL } from './data/planes.pt.js';
 
+// ── patch: cycles_patch (C6) ──
+import { CYCLE_TEXTS, CYCLE_TRANSITION } from './data/cycles.pt.js';
+
 /* ════════════════════════════════════════════════
    RENDER ENGINE
 ════════════════════════════════════════════════ */
@@ -289,6 +292,10 @@ function renderJornada(data){
     html+='</div>';
   });
   html+='</div>';
+
+  // ── bloco interpretativo do ciclo ativo — patch C6 ──
+  html += buildCycleReading(data.cycles, data.age);
+
   html+=buildSectionHead(t('secPinnacles'),'dot-date');
   html+='<div class="pinnacles-chart">';
   data.pinnacles.forEach(function(p,i){
@@ -507,6 +514,69 @@ function buildPlanesBlock(planes){
   html += '</div>'; // fecha elements-wrap
   return html;
 }
+/* ════════════════════════════════════════════════════════
+   patch C6 — helper buildCycleReading()
+════════════════════════════════════════════════════════ */
+
+function buildCycleReading(cycles, age) {
+  // Encontra o ciclo ativo e seu índice de posição (0 = formativo, 1 = consolidação, 2 = conclusão)
+  var activeCyc = null;
+  var activeIdx = -1;
+  cycles.forEach(function(cyc, i) {
+    var current = age >= cyc.start && (cyc.end === null || age < cyc.end);
+    if (current) { activeCyc = cyc; activeIdx = i; }
+  });
+
+  if (!activeCyc || activeIdx === -1) return '';
+
+  var cycleMap  = CYCLE_TEXTS[activeIdx];
+  var cycleText = cycleMap ? (cycleMap[activeCyc.num] || '') : '';
+  if (!cycleText) return '';
+
+  // Transição iminente: ciclo termina nos próximos 3 anos
+  var isNearTransition = activeCyc.end !== null && (activeCyc.end - age) <= 3;
+
+  var posLabel = activeIdx === 0
+    ? 'Ciclo Formativo'
+    : activeIdx === 1
+    ? 'Ciclo de Consolidação'
+    : 'Ciclo de Conclusão';
+
+  var html = '';
+
+  html += '<div class="cycle-reading mb20">';
+
+  // Cabeçalho: número + rótulo de posição
+  html += '<div class="cycle-reading-header">';
+  html += '<span class="cycle-reading-num'+(!!MASTERS[activeCyc.num]?' is-master':'')+'">'
+        + activeCyc.num + '</span>';
+  html += '<div class="cycle-reading-meta">';
+  html += '<span class="cycle-reading-pos">'+escH(posLabel)+'</span>';
+  html += '<span class="cycle-reading-label">'+escH(activeCyc.label)+'</span>';
+  html += '</div>';
+  html += '</div>';
+
+  // Texto interpretativo (expandível, aberto por padrão)
+  html += '<details class="essence-details cycle-reading-details" open>';
+  html += '<summary class="essence-summary">Ler este ciclo</summary>';
+  html += '<div class="essence-body">';
+  html += '<p class="cycle-reading-text">'+escH(cycleText)+'</p>';
+
+  // Nota de transição iminente
+  if (isNearTransition) {
+    html += '<div class="cycle-transition-note">';
+    html += '<span class="cycle-transition-label">Transição próxima</span>';
+    html += '<p>'+escH(CYCLE_TRANSITION)+'</p>';
+    html += '</div>';
+  }
+
+  html += '</div></details>';
+  html += '</div>';
+
+  return html;
+}
+
+
 function renderPresente(data){
   var html='', pd=data.personalDay;
   html+=buildSectionHead(t('secPersonalYear'),'dot-date');
