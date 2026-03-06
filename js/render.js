@@ -29,6 +29,9 @@ import { CYCLE_TEXTS, CYCLE_TRANSITION } from './data/cycles.pt.js';
 // ── patch: pinnacles_patch (C7) ──
 import { PINNACLE_TEXTS, CHALLENGE_TEXTS } from './data/pinnacles_pt.js';
 
+// ── patch: karmicLessons_patch (C8) ──
+import { KARMIC_LESSON_TEXTS, KARMIC_MULTIPLE_NOTE } from './data/karmicLessons_pt.js';
+
 /* ════════════════════════════════════════════════
    RENDER ENGINE
 ════════════════════════════════════════════════ */
@@ -808,12 +811,53 @@ function renderPadroes(data){
   });
   html+='</div>';
   html+=buildSectionHead(t('secKarmicLessons'),'dot-karmic');
-  html+='<div class="karmic-lessons mb20"><div class="karmic-lessons-title">'+t('secKarmicLessons')+'</div><div class="karmic-lessons-nums">';
-  if(!data.karmicLessons.length) html+='<span class="kl-none">'+escH(t('labelNoKarmic'))+'</span>';
-  else data.karmicLessons.forEach(function(n){html+='<div class="kl-badge">'+n+'</div>';});
-  html+='</div></div>';
+  // ── patch C8 — licoes karmicas expandiveis ──
+  html += buildKarmicLessonsBlock(data.karmicLessons);
   return html;
 }
+/* ════════════════════════════════════════════════════════
+   patch C8 — helper buildKarmicLessonsBlock()
+════════════════════════════════════════════════════════ */
+
+function buildKarmicLessonsBlock(karmicLessons) {
+  var html = '';
+
+  // Nenhuma lição — nome completo
+  if (!karmicLessons.length) {
+    html += '<div class="karmic-lessons mb20">';
+    html += '<div class="karmic-lessons-nums"><span class="kl-none">' + escH('Nenhuma — todas as vibrações estão presentes no nome.') + '</span></div>';
+    html += '</div>';
+    return html;
+  }
+
+  html += '<div class="karmic-lessons-block mb20">';
+
+  // Nota de múltiplas lições (count >= 3)
+  if (karmicLessons.length >= 3) {
+    html += '<div class="kl-multiple-note">' + escH(KARMIC_MULTIPLE_NOTE) + '</div>';
+  }
+
+  // Badges expandíveis
+  html += '<div class="kl-list">';
+  karmicLessons.forEach(function(n) {
+    var text = KARMIC_LESSON_TEXTS[n] || '';
+    html += '<details class="kl-item">';
+    html += '<summary class="kl-summary">';
+    html += '<span class="kl-badge-num">' + n + '</span>';
+    html += '<span class="kl-badge-label">Lição Kármica ' + n + '</span>';
+    html += '<span class="kl-badge-arrow"></span>';
+    html += '</summary>';
+    if (text) {
+      html += '<div class="kl-body">' + escH(text) + '</div>';
+    }
+    html += '</details>';
+  });
+  html += '</div>';
+
+  html += '</div>';
+  return html;
+}
+
 function renderComplementar(data){
   var html = '';
 

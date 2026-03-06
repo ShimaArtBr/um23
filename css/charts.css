@@ -278,3 +278,88 @@
   text-transform: uppercase;
   margin-bottom: 6px;
 }
+
+/* ═══ KARMIC LESSONS EXPANDABLE (C8) ═══ */
+.karmic-lessons-block {
+  background: rgba(181,43,10,.05);
+  border: 1px solid rgba(181,43,10,.22);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.kl-multiple-note {
+  padding: 12px 16px;
+  font-size: .80rem;
+  line-height: 1.7;
+  color: #b52b0a;
+  border-bottom: 1px solid rgba(181,43,10,.15);
+  background: rgba(181,43,10,.04);
+  font-weight: 300;
+}
+.kl-list {
+  display: flex;
+  flex-direction: column;
+}
+.kl-item {
+  border-bottom: 1px solid rgba(181,43,10,.12);
+}
+.kl-item:last-child { border-bottom: none; }
+.kl-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  list-style: none;
+  transition: background var(--t-fast) var(--ease);
+}
+.kl-summary::-webkit-details-marker { display: none; }
+.kl-summary:hover { background: rgba(181,43,10,.07); }
+.kl-badge-num {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(181,43,10,.4);
+  background: rgba(181,43,10,.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'PT Serif', serif;
+  font-size: 1rem;
+  color: #b52b0a;
+  flex-shrink: 0;
+  transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+details[open] .kl-badge-num {
+  background: rgba(181,43,10,.18);
+  border-color: rgba(181,43,10,.6);
+}
+.kl-badge-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .60rem;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: #b52b0a;
+  flex: 1;
+}
+.kl-badge-arrow {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid rgba(181,43,10,.4);
+  flex-shrink: 0;
+  transition: transform var(--t-fast) var(--ease);
+}
+details[open] .kl-badge-arrow { transform: rotate(180deg); }
+.kl-body {
+  padding: 10px 20px 14px 62px;
+  font-size: .82rem;
+  line-height: 1.78;
+  color: var(--muted);
+  font-weight: 300;
+  border-top: 1px solid rgba(181,43,10,.10);
+  background: rgba(181,43,10,.02);
+}
+@media (max-width: 480px) {
+  .kl-body { padding-left: 20px; }
+}
