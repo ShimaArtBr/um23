@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════════
-   UM23 — Service Worker v3
+   UM23 — Service Worker v5
    Estrategia: cache-first · offline-ready
    Atualizado para arquitetura modular ES Modules
 ═══════════════════════════════════════════════════ */
-var CACHE = 'um23-v4';
+var CACHE = 'um23-v5';
 var CORE  = [
   '/',
   '/index.html',
@@ -15,14 +15,23 @@ var CORE  = [
   '/css/components.css',
   '/css/charts.css',
 
-  /* JS modular */
+  /* JS modular — nucleo */
   '/js/app.js',
   '/js/engine.js',
   '/js/render.js',
+
+  /* JS data — todos os arquivos importados pelo modulo */
   '/js/data/i18n.pt.js',
   '/js/data/texts.pt.js',
   '/js/data/i18n.en.js',
-  '/js/data/texts.en.js'
+  '/js/data/texts.en.js',
+  '/js/data/keystones.js',
+  '/js/data/complementar.js',
+  '/js/data/bridges.pt.js',
+  '/js/data/planes.pt.js',
+  '/js/data/cycles.pt.js',
+  '/js/data/hiddenPassion.pt.js',
+  '/js/data/pinnacles_pt.js'
 ];
 
 self.addEventListener('install', function(e) {

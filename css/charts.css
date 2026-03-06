@@ -103,3 +103,178 @@
 .cards-grid .num-card:nth-child(2) { animation-delay:60ms; }
 .cards-grid .num-card:nth-child(3) { animation-delay:120ms; }
 
+
+/* ═══ PINNACLE & CHALLENGE READING (C7) ═══ */
+.pinnacle-reading,
+.challenge-reading {
+  background: var(--panel);
+  border: 1px solid var(--bg-gold);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.pinnacle-reading-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--bg-gold);
+  background: rgba(201,168,76,.03);
+}
+.pinnacle-reading-num {
+  font-family: 'PT Serif', serif;
+  font-size: 2.4rem;
+  color: var(--gold-dim);
+  line-height: 1;
+  width: 48px;
+  flex-shrink: 0;
+  text-align: center;
+}
+.pinnacle-reading-num.is-master { color: var(--gold); }
+.challenge-zero-num {
+  font-size: 2.0rem;
+  color: var(--muted);
+  font-style: italic;
+}
+.pinnacle-reading-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+.pinnacle-reading-pos {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.challenge-zero-header .pinnacle-reading-pos {
+  color: var(--muted);
+}
+.pinnacle-reading-phase {
+  font-size: .78rem;
+  color: var(--muted);
+  font-weight: 300;
+}
+.pinnacle-reading-ages {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .56rem;
+  color: var(--dim);
+  letter-spacing: .04em;
+  margin-top: 2px;
+}
+.pinnacle-reading-now {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .48rem;
+  color: var(--gold);
+  background: rgba(201,168,76,.12);
+  border: 1px solid rgba(201,168,76,.25);
+  border-radius: 10px;
+  padding: 1px 7px;
+  letter-spacing: .08em;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+.pinnacle-reading-text {
+  font-size: .84rem;
+  line-height: 1.8;
+  color: var(--muted);
+  font-weight: 300;
+  margin: 0;
+}
+/* Other pinnacles / challenges list */
+.pinnacle-other-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--bg-gold);
+}
+.pinnacle-other-item:last-child { border-bottom: none; }
+.pinnacle-other-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.pinnacle-other-num {
+  font-family: 'PT Serif', serif;
+  font-size: 1.3rem;
+  color: var(--gold-dim);
+  line-height: 1;
+  width: 28px;
+  flex-shrink: 0;
+  text-align: center;
+}
+.pinnacle-other-num.is-master { color: var(--gold); }
+.pinnacle-other-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .58rem;
+  color: var(--gold);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.pinnacle-other-ages {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .52rem;
+  color: var(--dim);
+  letter-spacing: .04em;
+  margin-left: auto;
+}
+.pinnacle-other-text {
+  font-size: .80rem;
+  line-height: 1.75;
+  color: var(--dim);
+  font-weight: 300;
+  margin: 0;
+}
+/* Cycle-reading CSS (C6 patch — shared here for completeness) */
+.cycle-reading {
+  background: var(--panel);
+  border: 1px solid var(--bg-gold);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.cycle-reading-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--bg-gold);
+  background: rgba(201,168,76,.03);
+}
+.cycle-reading-num {
+  font-family: 'PT Serif', serif;
+  font-size: 2.4rem;
+  color: var(--gold-dim);
+  line-height: 1;
+  width: 48px;
+  flex-shrink: 0;
+  text-align: center;
+}
+.cycle-reading-num.is-master { color: var(--gold); }
+.cycle-reading-meta { display: flex; flex-direction: column; gap: 2px; }
+.cycle-reading-pos {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.cycle-reading-label { font-size: .78rem; color: var(--muted); font-weight: 300; }
+.cycle-reading-text { font-size: .84rem; line-height: 1.8; color: var(--muted); font-weight: 300; margin: 0; }
+.cycle-transition-note {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: rgba(201,168,76,.04);
+  border-left: 2px solid rgba(201,168,76,.3);
+  border-radius: 0 var(--r) var(--r) 0;
+}
+.cycle-transition-label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .54rem;
+  color: var(--gold);
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}

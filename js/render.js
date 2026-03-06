@@ -26,6 +26,9 @@ import { PLANE_DOMINANT, PLANE_LOW, PLANE_SPECIAL } from './data/planes.pt.js';
 // ── patch: cycles_patch (C6) ──
 import { CYCLE_TEXTS, CYCLE_TRANSITION } from './data/cycles.pt.js';
 
+// ── patch: pinnacles_patch (C7) ──
+import { PINNACLE_TEXTS, CHALLENGE_TEXTS } from './data/pinnacles_pt.js';
+
 /* ════════════════════════════════════════════════
    RENDER ENGINE
 ════════════════════════════════════════════════ */
@@ -312,10 +315,14 @@ function renderJornada(data){
     html+='<div class="pinnacle-footer-item"><span class="pinnacle-footer-label">P'+(i+1)+'</span><span class="pinnacle-footer-ages">'+ages+'</span>'+(isCurrent?'<span class="pinnacle-current-label">AGORA</span>':'')+'</div>';
   });
   html+='</div></div>';
+  // ── patch C7 — leitura interpretativa do Pináculo ativo ──
+  html += buildPinnacleReading(data.pinnacles, data.age);
   html+=buildSectionHead(t('secDesafios'),'dot-date');
   html+='<div class="tiles-grid cols4 mb20">';
   data.challenges.forEach(function(ch){ html+=buildSimpleTile({final:ch.num,pre:ch.num},ch.label,''); });
   html+='</div>';
+  // ── patch C7 — leitura interpretativa do Desafio ativo ──
+  html += buildChallengeReading(data.challenges, data.pinnacles, data.age);
   html+=buildSectionHead(t('secProjection'),'dot-master');
   html+='<div class="projection-wrap mb20"><div class="projection-title">'+t('yearLabel')+' \u00b7 '+t('numberLabel')+'</div>';
   var curYr=new Date().getFullYear();
@@ -572,6 +579,152 @@ function buildCycleReading(cycles, age) {
 
   html += '</div></details>';
   html += '</div>';
+
+  return html;
+}
+
+/* ════════════════════════════════════════════════════════
+   patch C7 — helpers buildPinnacleReading() + buildChallengeReading()
+════════════════════════════════════════════════════════ */
+
+function buildPinnacleReading(pinnacles, age) {
+  var activeIdx = -1;
+  pinnacles.forEach(function(p, i) {
+    if (age >= p.start && (p.end === null || age < p.end)) activeIdx = i;
+  });
+  if (activeIdx === -1) return '';
+
+  var posKeys = ['p1', 'p2', 'p3', 'p4'];
+  var posLabels = ['Primeiro Pináculo', 'Segundo Pináculo', 'Terceiro Pináculo', 'Quarto Pináculo'];
+  var phaseDesc = [
+    'Estabelecimento · Primeiras provas',
+    'Consolidação · Aprofundamento',
+    'Expressão máxima · Contribuição',
+    'Síntese · Legado'
+  ];
+
+  var activePinn = pinnacles[activeIdx];
+  var posKey = posKeys[activeIdx];
+  var textMap = PINNACLE_TEXTS[posKey];
+  var activeText = textMap ? (textMap[activePinn.num] || '') : '';
+  if (!activeText) return '';
+
+  var html = '';
+
+  // ── Bloco principal: Pináculo ativo ──
+  html += '<div class="pinnacle-reading mb20">';
+  html += '<div class="pinnacle-reading-header">';
+  html += '<span class="pinnacle-reading-num' + (MASTERS[activePinn.num] ? ' is-master' : '') + '">'
+        + activePinn.num + '</span>';
+  html += '<div class="pinnacle-reading-meta">';
+  html += '<span class="pinnacle-reading-pos">' + escH(posLabels[activeIdx]) + '</span>';
+  html += '<span class="pinnacle-reading-phase">' + escH(phaseDesc[activeIdx]) + '</span>';
+  var ageRange = activePinn.end
+    ? activePinn.start + '\u2013' + activePinn.end + ' anos'
+    : activePinn.start + '+ anos';
+  html += '<span class="pinnacle-reading-ages">' + ageRange + ' <span class="pinnacle-reading-now">AGORA</span></span>';
+  html += '</div>';
+  html += '</div>';
+
+  html += '<details class="essence-details pinnacle-reading-details" open>';
+  html += '<summary class="essence-summary">Ler este pináculo</summary>';
+  html += '<div class="essence-body">';
+  html += '<p class="pinnacle-reading-text">' + escH(activeText) + '</p>';
+  html += '</div></details>';
+  html += '</div>';
+
+  // ── Outros pináculos: colapsados ──
+  var hasOthers = pinnacles.some(function(p, i) { return i !== activeIdx; });
+  if (hasOthers) {
+    html += '<details class="essence-details pinnacle-others-details">';
+    html += '<summary class="essence-summary">Ver outros pináculos</summary>';
+    html += '<div class="essence-body">';
+    pinnacles.forEach(function(p, i) {
+      if (i === activeIdx) return;
+      var pKey = posKeys[i];
+      var pText = PINNACLE_TEXTS[pKey] ? (PINNACLE_TEXTS[pKey][p.num] || '') : '';
+      if (!pText) return;
+      var ages = p.end
+        ? p.start + '\u2013' + p.end + ' anos'
+        : p.start + '+ anos';
+      html += '<div class="pinnacle-other-item">';
+      html += '<div class="pinnacle-other-header">';
+      html += '<span class="pinnacle-other-num' + (MASTERS[p.num] ? ' is-master' : '') + '">' + p.num + '</span>';
+      html += '<span class="pinnacle-other-label">' + escH(posLabels[i]) + '</span>';
+      html += '<span class="pinnacle-other-ages">' + escH(ages) + '</span>';
+      html += '</div>';
+      html += '<p class="pinnacle-other-text">' + escH(pText) + '</p>';
+      html += '</div>';
+    });
+    html += '</div></details>';
+  }
+
+  return html;
+}
+
+function buildChallengeReading(challenges, pinnacles, age) {
+  // O Desafio ativo corresponde ao mesmo índice do Pináculo ativo.
+  // D4 (índice 3) é o Desafio de Fluxo — ativo depois do P3.
+  var activeIdx = -1;
+  pinnacles.forEach(function(p, i) {
+    if (age >= p.start && (p.end === null || age < p.end)) activeIdx = i;
+  });
+
+  // Mapeia: pináculo 0→desafio 0, 1→desafio 1, 2→desafio 2, 3→desafio 3
+  var activeCh = challenges[activeIdx] || challenges[0];
+  if (!activeCh) return '';
+
+  var activeText = CHALLENGE_TEXTS[activeCh.num];
+  if (!activeText) return '';
+
+  var challengeLabels = ['Desafio 1', 'Desafio 2', 'Desafio 3', 'Desafio 4 (Fluxo)'];
+  var activeLabel = challengeLabels[activeIdx] || activeCh.label;
+  var isZero = (activeCh.num === 0);
+
+  var html = '';
+
+  // ── Bloco principal: Desafio ativo ──
+  html += '<div class="challenge-reading mb20">';
+  html += '<div class="pinnacle-reading-header' + (isZero ? ' challenge-zero-header' : '') + '">';
+  html += '<span class="pinnacle-reading-num' + (isZero ? ' challenge-zero-num' : '') + '">'
+        + activeCh.num + '</span>';
+  html += '<div class="pinnacle-reading-meta">';
+  html += '<span class="pinnacle-reading-pos">' + escH(activeLabel) + '</span>';
+  html += '<span class="pinnacle-reading-phase">'
+        + (isZero ? 'O desafio da escolha total' : 'Padrão de resistência desta fase')
+        + '</span>';
+  html += '<span class="pinnacle-reading-ages pinnacle-reading-now">FASE ATUAL</span>';
+  html += '</div>';
+  html += '</div>';
+
+  html += '<details class="essence-details challenge-reading-details" open>';
+  html += '<summary class="essence-summary">' + (isZero ? 'Ler o Desafio Zero' : 'Ler este desafio') + '</summary>';
+  html += '<div class="essence-body">';
+  html += '<p class="pinnacle-reading-text">' + escH(activeText) + '</p>';
+  html += '</div></details>';
+  html += '</div>';
+
+  // ── Outros desafios: colapsados ──
+  var hasOthers = challenges.some(function(ch, i) { return i !== activeIdx; });
+  if (hasOthers) {
+    html += '<details class="essence-details challenge-others-details">';
+    html += '<summary class="essence-summary">Ver outros desafios</summary>';
+    html += '<div class="essence-body">';
+    challenges.forEach(function(ch, i) {
+      if (i === activeIdx) return;
+      var chText = CHALLENGE_TEXTS[ch.num];
+      if (!chText) return;
+      var lbl = challengeLabels[i] || ch.label;
+      html += '<div class="pinnacle-other-item">';
+      html += '<div class="pinnacle-other-header">';
+      html += '<span class="pinnacle-other-num">' + ch.num + '</span>';
+      html += '<span class="pinnacle-other-label">' + escH(lbl) + '</span>';
+      html += '</div>';
+      html += '<p class="pinnacle-other-text">' + escH(chText) + '</p>';
+      html += '</div>';
+    });
+    html += '</div></details>';
+  }
 
   return html;
 }
