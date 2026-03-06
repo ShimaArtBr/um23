@@ -8,6 +8,21 @@ import {
 import { TEXTS } from './data/texts.pt.js';
 import { t } from './data/i18n.pt.js';
 
+// ── patch: render_patch (keystones) ──
+import { CORNERSTONE_TEXTS, CAPSTONE_TEXTS, FIRST_VOWEL_TEXTS } from './data/keystones.js';
+
+// ── patch: complementar_patch ──
+import {
+  BALANCE_TEXTS, RATIONAL_TEXTS, SUBCONSCIOUS_TEXTS,
+  BALANCE_CONTEXT, RATIONAL_CONTEXT, SUBCONSCIOUS_CONTEXT
+} from './data/complementar.js';
+
+// ── patch: bridges_patch ──
+import { BRIDGE_SCALE, BRIDGE_CONTEXT } from './data/bridges.pt.js';
+
+// ── patch: planes_patch (C5) ──
+import { PLANE_DOMINANT, PLANE_LOW, PLANE_SPECIAL } from './data/planes.pt.js';
+
 /* ════════════════════════════════════════════════
    RENDER ENGINE
 ════════════════════════════════════════════════ */
@@ -230,9 +245,27 @@ function renderIdentidade(data){
   html+=buildSectionHead(t('secPedras'),'dot-name');
   html+='<div class="section-desc">'+escH(t('secPedrasDesc'))+'</div>';
   html+='<div class="tiles-grid mb20">';
-  html+=buildLetterTile(data.cornerstone.letter,data.cornerstone.value.final,t('labelCornerstone'),t('labelCornerstoneSub'));
-  html+=buildLetterTile(data.capstone.letter,data.capstone.value.final,t('labelCapstone'),t('labelCapstoneSub'));
-  html+=buildLetterTile(data.firstVowel.letter,data.firstVowel.value.final,t('labelFirstVowel'),t('labelFirstVowelSub'));
+  html+=buildLetterTile(
+    data.cornerstone.letter,
+    data.cornerstone.value.final,
+    t('labelCornerstone'),
+    t('labelCornerstoneSub'),
+    CORNERSTONE_TEXTS[data.cornerstone.letter] || ''
+  );
+  html+=buildLetterTile(
+    data.capstone.letter,
+    data.capstone.value.final,
+    t('labelCapstone'),
+    t('labelCapstoneSub'),
+    CAPSTONE_TEXTS[data.capstone.letter] || ''
+  );
+  html+=buildLetterTile(
+    data.firstVowel.letter,
+    data.firstVowel.value.final,
+    t('labelFirstVowel'),
+    t('labelFirstVowelSub'),
+    FIRST_VOWEL_TEXTS[data.firstVowel.letter] || ''
+  );
   html+='</div>';
   html+=renderNameBreakdown(data);
   return html;
@@ -290,16 +323,60 @@ function renderJornada(data){
 function buildSectionHead(label, dotClass){
   return '<div class="block-header"><div class="block-dot '+dotClass+'"></div><div class="block-label">'+escH(label)+'</div><div class="block-line"></div></div>';
 }
-function buildLetterTile(letter, value, label, sub){
-  var isMaster=MASTERS[value]?' master':'';
-  return '<div class="s-tile'+isMaster+'">'
-    +'<div class="letter-tile-top"><span class="letter-big">'+escH(letter||'—')+'</span><span class="letter-arrow">→</span><span class="s-tile-num" style="font-size:1.4rem">'+value+'</span></div>'
-    +'<div class="s-tile-label">'+escH(label)+'</div>'
-    +'<div class="s-tile-sub">'+escH(sub)+'</div>'
-    +'</div>';
+function buildLetterTile(letter, value, label, sub, interp){
+  var isMaster = MASTERS[value] ? ' master' : '';
+  var interpHtml = interp
+    ? '<div class="s-tile-interp">'+escH(interp)+'</div>'
+    : '';
+  return '<div class="s-tile'+isMaster+' keystone-tile">'
+    + '<div class="letter-tile-top">'
+    +   '<span class="letter-big">'+escH(letter||'—')+'</span>'
+    +   '<span class="letter-arrow">→</span>'
+    +   '<span class="s-tile-num" style="font-size:1.4rem">'+value+'</span>'
+    + '</div>'
+    + '<div class="s-tile-label">'+escH(label)+'</div>'
+    + '<div class="s-tile-sub">'+escH(sub)+'</div>'
+    + interpHtml
+    + '</div>';
 }
-function buildBridgeRow(label, num){
-  return '<div class="bridge-row"><div class="bridge-label">'+escH(label)+'</div><div class="bridge-num">'+num+'</div></div>';
+function buildBridgeRow(label, num, contextKey){
+  // Ícone de intensidade proporcional ao delta
+  // delta 0   → sem dots (harmonia natural)
+  // delta 1–2 → ●      (ajuste leve)
+  // delta 3–4 → ●●     (tensão criativa)
+  // delta 5+  → ●●●    (polaridade significativa)
+  var dots = '';
+  if      (num >= 5) dots = '<span class="bridge-dots bridge-dots--high" title="Polaridade significativa">●●●</span>';
+  else if (num >= 3) dots = '<span class="bridge-dots bridge-dots--mid"  title="Tensão criativa">●●</span>';
+  else if (num >= 1) dots = '<span class="bridge-dots bridge-dots--low"  title="Ajuste leve">●</span>';
+
+  var detailsHtml = '';
+  if(contextKey){
+    var scaleText   = BRIDGE_SCALE[num]          || '';
+    var contextText = BRIDGE_CONTEXT[contextKey] || '';
+    if(scaleText || contextText){
+      detailsHtml =
+          '<details class="bridge-details essence-details">'
+        + '<summary class="bridge-summary essence-summary">Interpretar esta ponte</summary>'
+        + '<div class="bridge-interp essence-body">'
+        +   (contextText ? '<p class="bridge-interp-context">'+escH(contextText)+'</p>' : '')
+        +   (scaleText   ? '<p class="bridge-interp-scale">'+escH(scaleText)+'</p>'     : '')
+        + '</div>'
+        + '</details>';
+    }
+  }
+
+  return ''
+    + '<div class="bridge-row bridge-row--expandable">'
+    +   '<div class="bridge-row-main">'
+    +     '<div class="bridge-label">'+escH(label)+'</div>'
+    +     '<div class="bridge-right">'
+    +       dots
+    +       '<div class="bridge-num">'+num+'</div>'
+    +     '</div>'
+    +   '</div>'
+    +   detailsHtml
+    + '</div>';
 }
 function buildSimpleTile(numResult, label, sub, extraClass){
   var n=numResult?numResult.final:0;
@@ -311,6 +388,124 @@ function buildSimpleTile(numResult, label, sub, extraClass){
     +'<div class="s-tile-label">'+escH(label)+'</div>'
     +(sub?'<div class="s-tile-sub">'+escH(sub)+'</div>':'')
     +'</div>';
+
+}
+
+/* ════════════════════════════════════════════════
+   HELPERS ADICIONADOS PELOS PATCHES
+════════════════════════════════════════════════ */
+
+// patch: complementar_patch — tile largo com texto interpretativo
+function buildComplementarTile(numResult, label, sub, interp){
+  var n = numResult ? numResult.final : 0;
+  var isMaster = MASTERS[n] ? ' master' : '';
+  var isKarmic = (numResult && KARMIC[numResult.pre]) ? ' karmic' : '';
+  var interpHtml = interp
+    ? '<div class="complementar-interp">'+escH(interp)+'</div>'
+    : '';
+  return '<div class="s-tile complementar-tile'+isMaster+isKarmic+'">'
+    + '<div class="s-tile-num">'+n+'</div>'
+    + '<div class="s-tile-label">'+escH(label)+'</div>'
+    + '<div class="s-tile-sub">'+escH(sub)+'</div>'
+    + interpHtml
+    + '</div>';
+}
+
+// patch: planes_patch C5 — grade dos 4 planos com texto interpretativo
+function buildPlanesBlock(planes){
+  var pl     = planes;
+  var counts = { fisico: pl.fisico||0, emocional: pl.emocional||0, mental: pl.mental||0, intuitivo: pl.intuitivo||0 };
+  var keys   = ['fisico','emocional','mental','intuitivo'];
+
+  var maxVal = Math.max(counts.fisico, counts.emocional, counts.mental, counts.intuitivo);
+  var minVal = Math.min(counts.fisico, counts.emocional, counts.mental, counts.intuitivo);
+  var total  = counts.fisico + counts.emocional + counts.mental + counts.intuitivo;
+
+  var dominantKeys = keys.filter(function(k){ return counts[k] === maxVal; });
+  var lowestKeys   = keys.filter(function(k){ return counts[k] === minVal; });
+
+  // Equilíbrio: amplitude (max − min) ≤ 2 e total > 0
+  var isBalanced = (maxVal - minVal) <= 2 && total > 0;
+
+  // Plano de atenção: ausente (0) ou diferença ≥ 3 para o dominante
+  var attentionKeys = lowestKeys.filter(function(k){
+    return counts[k] === 0 || (maxVal - counts[k]) >= 3;
+  });
+
+  var plDefs = [
+    { key: 'fisico',    icon: '🏔', label: t('planPhysical')  },
+    { key: 'emocional', icon: '❤',  label: t('planEmotional') },
+    { key: 'mental',    icon: '⚡', label: t('planMental')    },
+    { key: 'intuitivo', icon: '✨', label: t('planIntuitive') }
+  ];
+
+  var html = '';
+
+  // Grade dos 4 planos
+  html += '<div class="elements-wrap mb20">';
+  html += '<div class="elements-grid-4">';
+
+  plDefs.forEach(function(p){
+    var cnt   = counts[p.key];
+    var isDom = !isBalanced && cnt === maxVal && maxVal > 0;
+    var isLow = attentionKeys.indexOf(p.key) !== -1;
+    var cellCls = 'el-cell'
+      + (isDom ? ' dominant'     : '')
+      + (isLow ? ' el-attention' : '');
+
+    html += '<div class="'+cellCls+'">';
+    html += '<span class="el-icon">'+p.icon+'</span>';
+    html += '<div class="el-count">'+cnt+'</div>';
+    html += '<div class="el-name">'+escH(p.label)+'</div>';
+    if(isLow && !isDom){
+      html += '<div class="el-attention-tag">atenção</div>';
+    }
+    html += '<div class="el-bar-wrap"><div class="el-bar" style="width:'
+      + (maxVal ? Math.round(cnt / maxVal * 100) : 0) + '%"></div></div>';
+    html += '</div>';
+  });
+
+  html += '</div>'; // fecha elements-grid-4
+
+  // Texto expandível: dominante ou equilíbrio
+  var interpText = '';
+  if(isBalanced){
+    interpText = PLANE_SPECIAL.equilibrio || '';
+  } else if(dominantKeys.length === 1){
+    interpText = PLANE_DOMINANT[dominantKeys[0]] || '';
+  } else {
+    // Dois planos empatados: usa o primeiro
+    interpText = PLANE_DOMINANT[dominantKeys[0]] || '';
+  }
+
+  if(interpText){
+    html += '<details class="essence-details plane-dominant-details">'
+      + '<summary class="essence-summary">Interpretar configuração dos planos</summary>'
+      + '<div class="essence-body">'
+      + '<p>'+escH(interpText)+'</p>';
+
+    // Notas dos planos de atenção
+    attentionKeys.forEach(function(k){
+      var lowText  = PLANE_LOW[k] || '';
+      var noteText = '';
+      if(counts[k] === 0 && k === 'fisico')      noteText = PLANE_SPECIAL.semFisico    || lowText;
+      else if(counts[k] === 0 && k === 'intuitivo') noteText = PLANE_SPECIAL.semIntuitivo || lowText;
+      else noteText = lowText;
+
+      if(noteText){
+        var plDef = plDefs.filter(function(p){ return p.key === k; })[0];
+        html += '<div class="plane-low-note">'
+          + '<span class="plane-low-label">'+escH(plDef.label)+'</span>'
+          + '<p>'+escH(noteText)+'</p>'
+          + '</div>';
+      }
+    });
+
+    html += '</div></details>';
+  }
+
+  html += '</div>'; // fecha elements-wrap
+  return html;
 }
 function renderPresente(data){
   var html='', pd=data.personalDay;
@@ -397,46 +592,61 @@ function renderPadroes(data){
   return html;
 }
 function renderComplementar(data){
-  var html='';
-  html+=buildSectionHead(t('secComplementar'),'dot-name');
-  html+='<div class="tiles-grid mb20">';
-  html+=buildSimpleTile(data.balance,t('labelBalance'),t('labelBalanceSub'));
-  html+=buildSimpleTile(data.rational,t('labelRational'),t('labelRationalSub'));
-  html+=buildSimpleTile(data.subconscious,t('labelSubconscious'),t('labelSubconsciousSub'));
-  html+='</div>';
-  html+=buildSectionHead(t('secHiddenPassion'),'dot-name');
-  html+='<div class="tiles-grid mb20">';
+  var html = '';
+
+  // ── 1. SEÇÃO COMPLEMENTAR — Equilíbrio, Pensamento Racional, Subconsciente ──
+  // patch: complementar_patch
+  html += buildSectionHead(t('secComplementar'), 'dot-name');
+
+  var balanceNum      = data.balance     ? data.balance.final     : 0;
+  var rationalNum     = data.rational    ? data.rational.final    : 0;
+  var subconsciousNum = data.subconscious? data.subconscious.final: 0;
+
+  html += '<div class="complementar-block mb20">';
+  html += '<div class="complementar-context">'+escH(BALANCE_CONTEXT)+'</div>';
+  html += '<div class="tiles-grid">';
+  html += buildComplementarTile(data.balance,     t('labelBalance'),      t('labelBalanceSub'),      BALANCE_TEXTS[balanceNum]         || '');
+  html += '</div></div>';
+
+  html += '<div class="complementar-block mb20">';
+  html += '<div class="complementar-context">'+escH(RATIONAL_CONTEXT)+'</div>';
+  html += '<div class="tiles-grid">';
+  html += buildComplementarTile(data.rational,    t('labelRational'),     t('labelRationalSub'),     RATIONAL_TEXTS[rationalNum]       || '');
+  html += '</div></div>';
+
+  html += '<div class="complementar-block mb20">';
+  html += '<div class="complementar-context">'+escH(SUBCONSCIOUS_CONTEXT)+'</div>';
+  html += '<div class="tiles-grid">';
+  html += buildComplementarTile(data.subconscious,t('labelSubconscious'), t('labelSubconsciousSub'), SUBCONSCIOUS_TEXTS[subconsciousNum]|| '');
+  html += '</div></div>';
+
+  // ── 2. PAIXÃO OCULTA ──
+  html += buildSectionHead(t('secHiddenPassion'), 'dot-name');
+  html += '<div class="tiles-grid mb20">';
   if(data.hiddenPassion.nums.length){
     data.hiddenPassion.nums.forEach(function(n){
-      html+=buildSimpleTile({final:n,pre:n},t('labelHiddenPassion'),data.hiddenPassion.count+'×');
+      html += buildSimpleTile({final:n,pre:n}, t('labelHiddenPassion'), data.hiddenPassion.count+'×');
     });
   } else {
-    html+='<div class="s-tile"><div class="s-tile-label">'+escH(t('hiddenPassionNone'))+'</div></div>';
+    html += '<div class="s-tile"><div class="s-tile-label">'+escH(t('hiddenPassionNone'))+'</div></div>';
   }
-  html+='</div>';
-  html+=buildSectionHead(t('secBridges'),'dot-name');
-  html+='<div class="section-desc">'+escH(t('bridgesDesc'))+'</div>';
-  html+='<div class="bridges-wrap mb20">';
-  html+=buildBridgeRow(t('bridgeMotExpr'),data.bridges.motExpr.final);
-  html+=buildBridgeRow(t('bridgeMotLP'),data.bridges.motLP.final);
-  html+=buildBridgeRow(t('bridgeExprLP'),data.bridges.exprLP.final);
-  html+=buildBridgeRow(t('bridgeImpExpr'),data.bridges.impExpr.final);
-  html+='</div>';
-  html+=buildSectionHead(t('secPlanes'),'dot-name');
-  html+='<div class="section-desc">'+escH(t('planesDesc'))+'</div>';
-  var pl=data.planes, maxPl=Math.max(pl.mental,pl.emocional,pl.fisico,pl.intuitivo);
-  html+='<div class="elements-wrap mb20"><div class="elements-grid-4">';
-  [{key:'fisico',icon:'🏔',label:t('planPhysical')},{key:'emocional',icon:'❤',label:t('planEmotional')},
-   {key:'mental',icon:'⚡',label:t('planMental')},{key:'intuitivo',icon:'✨',label:t('planIntuitive')}].forEach(function(p){
-    var cnt=pl[p.key]||0, isDom=cnt===maxPl&&maxPl>0;
-    html+='<div class="el-cell'+(isDom?' dominant':'')+'">'
-      +'<span class="el-icon">'+p.icon+'</span>'
-      +'<div class="el-count">'+cnt+'</div>'
-      +'<div class="el-name">'+escH(p.label)+'</div>'
-      +'<div class="el-bar-wrap"><div class="el-bar" style="width:'+(maxPl?cnt/maxPl*100:0)+'%"></div></div>'
-      +'</div>';
-  });
-  html+='</div></div>';
+  html += '</div>';
+
+  // ── 3. PONTES — patch: bridges_patch (buildBridgeRow com 3 args) ──
+  html += buildSectionHead(t('secBridges'), 'dot-name');
+  html += '<div class="section-desc">'+escH(t('bridgesDesc'))+'</div>';
+  html += '<div class="bridges-wrap mb20">';
+  html += buildBridgeRow(t('bridgeMotExpr'), data.bridges.motExpr.final, 'motExpr');
+  html += buildBridgeRow(t('bridgeMotLP'),   data.bridges.motLP.final,   'motLP');
+  html += buildBridgeRow(t('bridgeExprLP'),  data.bridges.exprLP.final,  'exprLP');
+  html += buildBridgeRow(t('bridgeImpExpr'), data.bridges.impExpr.final, 'impExpr');
+  html += '</div>';
+
+  // ── 4. PLANOS DE EXPRESSÃO — patch: planes_patch C5 (buildPlanesBlock) ──
+  html += buildSectionHead(t('secPlanes'), 'dot-name');
+  html += '<div class="section-desc">'+escH(t('planesDesc'))+'</div>';
+  html += buildPlanesBlock(data.planes);
+
   return html;
 }
 function renderPrevisoes(data){
