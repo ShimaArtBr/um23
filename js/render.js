@@ -111,6 +111,7 @@ function renderResults(data) {
   document.getElementById('results').innerHTML = html;
   attachCardEvents();
   attachTabEvents();
+  _injectPdfBtn();
 
   // Scroll suave para resultados em mobile
   if (window.innerWidth < 820) {
@@ -1157,6 +1158,24 @@ function renderSobre() {
   html += '</div></div>';
   html += '<div class="sobre-credit">UM23 · SOLLUN · feito com tempo</div>';
   return html;
+}
+
+function _injectPdfBtn() {
+  // Remove any previous instance (recalculate)
+  var old = document.getElementById('pdfBtnWrap');
+  if (old) old.remove();
+
+  var wrap = document.createElement('div');
+  wrap.id = 'pdfBtnWrap';
+  wrap.className = 'pdf-btn-wrap';
+  wrap.innerHTML =
+    '<button class="pdf-btn" onclick="gerarPDF()" title="Exportar mapa como PDF">' +
+    '<span class="pdf-btn-icon">⬇</span>' +
+    '<span>GERAR PDF</span>' +
+    '</button>';
+
+  var resultsEl = document.getElementById('results');
+  if (resultsEl) resultsEl.appendChild(wrap);
 }
 
 export {

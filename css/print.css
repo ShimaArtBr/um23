@@ -1,0 +1,511 @@
+/* print.css — Estilos de impressão A4 luxury para UM23
+   ─────────────────────────────────────────────────────
+   Regras:
+   · A4, 1 polegada de margem
+   · Fundo branco (economia de tinta)
+   · Cores dourado / kármico preservadas (-webkit-print-color-adjust)
+   · Sem quebra de bloco: títulos sempre agrupados com seu conteúdo
+   ───────────────────────────────────────────────────── */
+
+@page {
+  size: A4;
+  margin: 1in;
+}
+
+/* ══════════════════════════════════════════
+   ACTIVAÇÃO DE IMPRESSÃO
+══════════════════════════════════════════ */
+@media print {
+
+  /* Força impressão fiel de cores e fundos */
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* ── Tema forçado claro (fundo branco) ── */
+  html,
+  body {
+    background: #ffffff !important;
+    color: #1a1814 !important;
+
+    /* Sobrescreve variáveis CSS do dark-theme */
+    --bg:       #ffffff;
+    --surface:  #faf8f2;
+    --panel:    #ffffff;
+    --panel2:   #f5f2ea;
+    --text:     #1a1814;
+    --muted:    #6b6458;
+    --dim:      #9a9488;
+    --shadow:   rgba(0,0,0,.06);
+    --gold:     #c9a84c;
+    --gold2:    #e8c97a;
+    --gold-dim: #a08830;
+    --bg-gold:  rgba(201,168,76,.10);
+  }
+
+  /* ══════════════════════════════════════════
+     OCULTAR ELEMENTOS DE INTERFACE
+  ══════════════════════════════════════════ */
+  .topbar,
+  .input-panel,
+  .empty-state,
+  .sobre-panel,
+  .map-tabs,
+  .tab-nav-hint,
+  .pdf-btn-wrap,
+  .card-chevron,
+  .section-tabs,        /* botões de sub-abas dentro dos cards */
+  .app-footer,
+  .sobre-back,
+  .bridge-details > summary,
+  .essence-details > summary,
+  .kl-item > summary,
+  details > summary {
+    display: none !important;
+  }
+
+  /* ══════════════════════════════════════════
+     LAYOUT DE PÁGINA
+  ══════════════════════════════════════════ */
+  .page {
+    display: block !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .results-panel {
+    width: 100% !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Exibir todos os painéis de aba */
+  .map-panel {
+    display: block !important;
+    animation: none !important;
+  }
+
+  /* Abrir todos os cards */
+  .card-body {
+    display: block !important;
+  }
+
+  /* Exibir todo conteúdo das sub-abas */
+  .section-content {
+    display: block !important;
+  }
+
+  /* Abrir todos os <details> */
+  details,
+  details > *:not(summary) {
+    display: block !important;
+  }
+
+  /* Separador visual entre painéis */
+  .map-panel + .map-panel {
+    margin-top: 20pt;
+    padding-top: 16pt;
+    border-top: 0.5pt solid rgba(201,168,76,.25);
+  }
+
+  /* ══════════════════════════════════════════
+     REGRAS DE QUEBRA DE PÁGINA
+     Título nunca separado do conteúdo
+  ══════════════════════════════════════════ */
+
+  /* Cabeçalho de seção fica sempre com o que vem depois */
+  .block-header            { page-break-after: avoid !important; }
+
+  /* Bloco completo: cabeçalho + cards */
+  .cards-grid              { page-break-inside: avoid !important; }
+  .tiles-grid              { page-break-inside: avoid !important; }
+
+  /* Cards individuais */
+  .num-card                { page-break-inside: avoid !important; }
+
+  /* Tiles de números */
+  .s-tile                  { page-break-inside: avoid !important; }
+
+  /* Leituras narrativas */
+  .cycle-reading           { page-break-inside: avoid !important; }
+  .pinnacle-reading        { page-break-inside: avoid !important; }
+  .challenge-reading       { page-break-inside: avoid !important; }
+  .forecast-reading        { page-break-inside: avoid !important; }
+  .forecast-month-reading  { page-break-inside: avoid !important; }
+  .forecast-day-note       { page-break-inside: avoid !important; }
+
+  /* Blocos complementares e pontes */
+  .complementar-block      { page-break-inside: avoid !important; }
+  .bridges-wrap            { page-break-inside: avoid !important; }
+  .bridge-row              { page-break-inside: avoid !important; }
+
+  /* Decomposição do nome */
+  .breakdown-name          { page-break-inside: avoid !important; }
+  .breakdown-wrap          { page-break-inside: avoid !important; }
+
+  /* Projeção e ciclos */
+  .projection-wrap         { page-break-inside: avoid !important; }
+  .cycles-timeline         { page-break-inside: avoid !important; }
+  .cycle-row               { page-break-inside: avoid !important; }
+  .pinnacles-chart         { page-break-inside: avoid !important; }
+  .pinnacle-reading        { page-break-inside: avoid !important; }
+  .pinnacle-other-item     { page-break-inside: avoid !important; }
+
+  /* Meses pessoais */
+  .months-grid             { page-break-inside: avoid !important; }
+
+  /* Lições kármicas */
+  .kl-item                 { page-break-inside: avoid !important; }
+  .kl-list                 { page-break-inside: avoid !important; }
+  .karmic-lessons-block    { page-break-inside: avoid !important; }
+
+  /* Planos e elementos */
+  .elements-wrap           { page-break-inside: avoid !important; }
+  .elements-grid-4         { page-break-inside: avoid !important; }
+  .el-cell                 { page-break-inside: avoid !important; }
+
+  /* Tabela pitagórica */
+  .pyth-table-wrap         { page-break-inside: avoid !important; }
+  .priority-wrap           { page-break-inside: avoid !important; }
+
+  /* Perfil e strip de números */
+  .name-profile            { page-break-inside: avoid !important; }
+  .num-strip               { page-break-inside: avoid !important; }
+  .mandala-wrap            { page-break-inside: avoid !important; }
+  .radar-wrap              { page-break-inside: avoid !important; }
+
+  /* Blocos de sintetizadores */
+  .letter-tile-top         { page-break-inside: avoid !important; }
+  .keystone-tile           { page-break-inside: avoid !important; }
+  .cycle-reading-header    { page-break-after: avoid !important; }
+  .pinnacle-reading-header { page-break-after: avoid !important; }
+  .forecast-reading-header { page-break-after: avoid !important; }
+  .forecast-month-header   { page-break-after: avoid !important; }
+
+  /* ══════════════════════════════════════════
+     LUXURY — CORES E TIPOGRAFIA PARA IMPRESSÃO
+  ══════════════════════════════════════════ */
+
+  /* ── Perfil do nome ── */
+  .name-initials {
+    background: rgba(201,168,76,.12) !important;
+    border: 1.5px solid rgba(201,168,76,.4) !important;
+    color: #a08830 !important;
+  }
+  .name-display { color: #1a1814 !important; }
+  .name-dob     { color: #6b6458 !important; }
+  .name-tag.tag-master { background: rgba(201,168,76,.15) !important; color: #a08830 !important; border-color: rgba(201,168,76,.35) !important; }
+  .name-tag.tag-karmic { background: rgba(181,43,10,.10) !important; color: #b52b0a !important; border-color: rgba(181,43,10,.30) !important; }
+
+  /* ── Strip de números ── */
+  .num-strip-item {
+    background: #faf8f2 !important;
+    border-color: rgba(201,168,76,.25) !important;
+  }
+  .num-strip-n                    { color: #a08830 !important; }
+  .num-strip-item.is-master .num-strip-n { color: #c9a84c !important; }
+  .num-strip-item.is-karmic .num-strip-n { color: #b52b0a !important; }
+  .num-strip-lbl                  { color: #9a9488 !important; }
+
+  /* ── Cabeçalhos de seção ── */
+  .block-line  { background: rgba(201,168,76,.3) !important; }
+  .block-label { color: #6b6458 !important; }
+  .dot-name    { background: #a08830 !important; }
+  .dot-date    { background: #c9a84c !important; }
+  .dot-master  { background: #c9a84c !important; }
+  .dot-karmic  { background: #b52b0a !important; }
+
+  /* ── Cards numerológicos ── */
+  .num-card {
+    background: #ffffff !important;
+    border-color: rgba(201,168,76,.25) !important;
+    box-shadow: none !important;
+    animation: none !important;
+  }
+  .num-card.master-card { border-color: rgba(201,168,76,.45) !important; }
+  .num-card.karmic-card { border-color: rgba(181,43,10,.35) !important; }
+
+  /* ── Badges numéricos ── */
+  .badge-name   { background: rgba(201,168,76,.10) !important; color: #a08830 !important; border-color: rgba(201,168,76,.25) !important; }
+  .badge-date   { background: rgba(201,168,76,.18) !important; color: #c9a84c !important; border-color: rgba(201,168,76,.40) !important; }
+  .badge-master { background: rgba(201,168,76,.22) !important; color: #e8c97a !important; border-color: rgba(201,168,76,.55) !important; }
+  .badge-synth  { background: rgba(201,168,76,.10) !important; color: #a08830 !important; border-color: rgba(201,168,76,.22) !important; }
+  .badge-karmic { background: rgba(181,43,10,.12) !important; color: #b52b0a !important; border-color: rgba(181,43,10,.35) !important; }
+
+  /* ── Texto dos cards ── */
+  .card-title    { color: #1a1814 !important; }
+  .card-role     { color: #6b6458 !important; }
+  .card-desc     { color: #9a9488 !important; }
+  .section-content {
+    color: #1a1814 !important;
+    background: transparent !important;
+    border-top-color: rgba(201,168,76,.15) !important;
+  }
+  .shadow-section {
+    background: rgba(0,0,0,.03) !important;
+    color: #6b6458 !important;
+    font-style: italic;
+  }
+  .master-star { color: #c9a84c !important; }
+  .formula-line { color: #6b6458 !important; border-bottom-color: rgba(201,168,76,.15) !important; }
+  .formula-tag  { background: rgba(201,168,76,.10) !important; color: #a08830 !important; border-color: rgba(201,168,76,.25) !important; }
+
+  /* ── Separador entre sub-seções dentro do card ── */
+  .card-body { border-top-color: rgba(201,168,76,.2) !important; }
+  .section-content + .section-content {
+    border-top: 0.5pt solid rgba(201,168,76,.15);
+    margin-top: 6pt;
+    padding-top: 6pt;
+  }
+
+  /* ── Essence / detalhes ── */
+  .essence-body { color: #1a1814 !important; background: transparent !important; }
+  .bridge-interp { background: transparent !important; color: #1a1814 !important; }
+
+  /* ── Tiles (S-Tile) ── */
+  .s-tile {
+    background: #faf8f2 !important;
+    border: 1px solid rgba(201,168,76,.2) !important;
+  }
+  .s-tile.master { border-color: rgba(201,168,76,.45) !important; }
+  .s-tile.karmic { border-color: rgba(181,43,10,.30) !important; }
+  .s-tile-num   { color: #a08830 !important; }
+  .s-tile.master .s-tile-num { color: #c9a84c !important; }
+  .s-tile.karmic .s-tile-num { color: #b52b0a !important; }
+  .s-tile-label { color: #6b6458 !important; }
+  .s-tile-sub   { color: #9a9488 !important; }
+  .s-tile-interp { color: #6b6458 !important; background: rgba(201,168,76,.05) !important; }
+  .complementar-interp { color: #6b6458 !important; }
+  .complementar-context {
+    background: rgba(201,168,76,.06) !important;
+    border-left-color: rgba(201,168,76,.30) !important;
+    color: #1a1814 !important;
+  }
+
+  /* ── Mandala SVG ── */
+  .mandala-legend-item { color: #6b6458 !important; }
+  .mandala-legend-dot  { opacity: 1 !important; }
+
+  /* ── Ciclos ── */
+  .cycle-bar-track  { background: rgba(201,168,76,.10) !important; }
+  .cycle-bar-fill   { background: rgba(201,168,76,.35) !important; }
+  .cycle-bar-fill.current { background: #c9a84c !important; }
+  .cycle-label, .cycle-ages { color: #6b6458 !important; }
+  .cycle-num        { color: #a08830 !important; }
+  .cycle-num.is-master { color: #c9a84c !important; }
+  .cycle-current-badge {
+    background: rgba(201,168,76,.12) !important;
+    color: #a08830 !important;
+    border-color: rgba(201,168,76,.30) !important;
+  }
+  .cycle-reading {
+    background: #faf8f2 !important;
+    border: 1px solid rgba(201,168,76,.2) !important;
+  }
+  .cycle-reading-num { background: rgba(201,168,76,.15) !important; color: #c9a84c !important; }
+  .cycle-reading-pos { color: #6b6458 !important; }
+
+  /* ── Pináculos ── */
+  .pinnacle-bar { background: rgba(201,168,76,.20) !important; border-color: rgba(201,168,76,.35) !important; }
+  .pinnacle-bar.current-pin { background: rgba(201,168,76,.35) !important; border-color: #c9a84c !important; }
+  .pinnacle-bar.is-master   { background: rgba(201,168,76,.25) !important; border-color: rgba(201,168,76,.55) !important; }
+  .pinnacle-bar-num { color: #a08830 !important; }
+  .pinnacle-footer-label { color: #6b6458 !important; }
+  .pinnacle-footer-ages  { color: #9a9488 !important; }
+  .pinnacle-current-label { color: #c9a84c !important; }
+  .pinnacle-reading {
+    background: #faf8f2 !important;
+    border: 1px solid rgba(201,168,76,.2) !important;
+  }
+  .pinnacle-reading-num  { background: rgba(201,168,76,.15) !important; color: #c9a84c !important; }
+  .pinnacle-reading-pos  { color: #6b6458 !important; }
+  .pinnacle-reading-phase{ color: #9a9488 !important; }
+  .pinnacle-reading-now  { color: #c9a84c !important; }
+  .pinnacle-reading-ages { color: #9a9488 !important; }
+  .pinnacle-other-num    { background: rgba(201,168,76,.12) !important; color: #a08830 !important; }
+  .pinnacle-other-num.is-master { color: #c9a84c !important; }
+  .pinnacle-other-label  { color: #6b6458 !important; }
+  .pinnacle-other-ages   { color: #9a9488 !important; }
+  .pinnacle-other-text   { color: #1a1814 !important; }
+
+  /* ── Desafios ── */
+  .challenge-reading { background: #faf8f2 !important; border: 1px solid rgba(201,168,76,.2) !important; }
+
+  /* ── Projeção ── */
+  .projection-wrap  { background: #faf8f2 !important; border-color: rgba(201,168,76,.2) !important; }
+  .projection-title { color: #9a9488 !important; }
+  .projection-row   { border-bottom-color: rgba(201,168,76,.12) !important; }
+  .proj-year        { color: #6b6458 !important; }
+  .proj-num         { color: #a08830 !important; }
+  .proj-bar-track   { background: rgba(201,168,76,.08) !important; }
+  .proj-bar-fill    { background: rgba(201,168,76,.35) !important; }
+  .projection-row.current .proj-num { color: #c9a84c !important; }
+  .projection-row.current { background: rgba(201,168,76,.06) !important; }
+  .projection-row.master  { background: rgba(201,168,76,.04) !important; }
+  .proj-current-tag { color: #c9a84c !important; background: rgba(201,168,76,.10) !important; border-color: rgba(201,168,76,.25) !important; }
+
+  /* ── Previsões ── */
+  .forecast-reading {
+    background: #faf8f2 !important;
+    border: 1px solid rgba(201,168,76,.2) !important;
+  }
+  .forecast-reading-num {
+    background: rgba(201,168,76,.15) !important;
+    color: #c9a84c !important;
+    border-color: rgba(201,168,76,.35) !important;
+  }
+  .forecast-reading-num.is-master { color: #e8c97a !important; }
+  .forecast-reading-label { color: #6b6458 !important; }
+  .forecast-reading-sub   { color: #9a9488 !important; }
+  .forecast-body          { color: #1a1814 !important; }
+  .forecast-p             { color: #1a1814 !important; }
+  .forecast-month-reading { background: #faf8f2 !important; border: 1px solid rgba(201,168,76,.2) !important; }
+  .forecast-month-num { background: rgba(201,168,76,.15) !important; color: #c9a84c !important; border-color: rgba(201,168,76,.35) !important; }
+  .forecast-month-body { color: #1a1814 !important; }
+  .forecast-day-note   { background: rgba(201,168,76,.06) !important; border-color: rgba(201,168,76,.2) !important; }
+  .forecast-day-note-num  { color: #c9a84c !important; }
+  .forecast-day-note-text { color: #6b6458 !important; }
+
+  /* ── Meses pessoais ── */
+  .month-tile {
+    background: #faf8f2 !important;
+    border-color: rgba(201,168,76,.20) !important;
+  }
+  .month-tile.current {
+    background: rgba(201,168,76,.08) !important;
+    border-color: #c9a84c !important;
+  }
+  .month-tile.master { border-color: rgba(201,168,76,.40) !important; }
+  .month-name { color: #9a9488 !important; }
+  .month-num  { color: #a08830 !important; }
+  .month-tile.current .month-num { color: #c9a84c !important; }
+  .month-tag  { color: #c9a84c !important; }
+
+  /* ── Radar / Elementos ── */
+  .radar-legend-item          { color: #6b6458 !important; }
+  .radar-legend-item.dominant .radar-legend-name { color: #a08830 !important; }
+  .radar-legend-count         { color: #a08830 !important; }
+
+  /* ── Planos de expressão ── */
+  .elements-grid-4 { gap: 8pt !important; }
+  .el-cell {
+    background: #faf8f2 !important;
+    border: 1px solid rgba(201,168,76,.18) !important;
+  }
+  .el-cell.dominant {
+    background: rgba(201,168,76,.10) !important;
+    border-color: rgba(201,168,76,.40) !important;
+  }
+  .el-cell.el-attention {
+    background: rgba(181,43,10,.04) !important;
+    border-color: rgba(181,43,10,.20) !important;
+  }
+  .el-count { color: #a08830 !important; }
+  .el-name  { color: #6b6458 !important; }
+  .el-bar-wrap { background: rgba(201,168,76,.10) !important; }
+  .el-bar      { background: rgba(201,168,76,.40) !important; }
+  .el-attention-tag { color: #b52b0a !important; background: rgba(181,43,10,.08) !important; }
+  .plane-dominant-details .essence-body { color: #1a1814 !important; }
+  .plane-low-label { color: #b52b0a !important; }
+
+  /* ── Tabela pitagórica ── */
+  .pyth-table-wrap {
+    background: #faf8f2 !important;
+    border-color: rgba(201,168,76,.2) !important;
+  }
+  .pyth-table-title { color: #6b6458 !important; }
+  .pyth-cell {
+    background: #faf8f2 !important;
+    border-color: rgba(201,168,76,.2) !important;
+  }
+  .pyth-cell.max {
+    background: rgba(201,168,76,.15) !important;
+    border-color: rgba(201,168,76,.45) !important;
+  }
+  .pyth-cell.zero {
+    background: rgba(181,43,10,.05) !important;
+    border-color: rgba(181,43,10,.15) !important;
+  }
+  .pyth-n     { color: #9a9488 !important; }
+  .pyth-count { color: #a08830 !important; }
+  .pyth-cell.max .pyth-count { color: #c9a84c !important; }
+  .pyth-cell.zero .pyth-count { color: #b52b0a !important; }
+  .pyth-bar-wrap  { background: rgba(201,168,76,.06) !important; }
+  .pyth-bar-inner { background: rgba(201,168,76,.40) !important; }
+
+  /* ── Prioridade ── */
+  .priority-wrap {
+    background: #faf8f2 !important;
+    border-color: rgba(201,168,76,.2) !important;
+  }
+  .priority-title  { color: #6b6458 !important; }
+  .priority-rank   { color: #9a9488 !important; }
+  .priority-num    { color: #a08830 !important; }
+  .priority-row.rank1 .priority-num { color: #c9a84c !important; font-size: 1.1rem !important; }
+  .priority-bar-track { background: rgba(201,168,76,.08) !important; }
+  .priority-bar-fill  { background: rgba(201,168,76,.40) !important; }
+  .priority-count  { color: #9a9488 !important; }
+
+  /* ── Pontes ── */
+  .bridges-wrap {
+    background: #faf8f2 !important;
+    border-color: rgba(201,168,76,.2) !important;
+  }
+  .bridge-row { border-bottom-color: rgba(201,168,76,.12) !important; }
+  .bridge-label { color: #1a1814 !important; }
+  .bridge-num   { color: #a08830 !important; font-weight: 500; }
+  .bridge-dots--high { color: #b52b0a !important; }
+  .bridge-dots--mid  { color: #c9a84c !important; }
+  .bridge-dots--low  { color: #a08830 !important; }
+  .bridge-interp-context { color: #6b6458 !important; }
+  .bridge-interp-scale   { color: #1a1814 !important; }
+
+  /* ── Lições kármicas ── */
+  .karmic-lessons-block { border-color: rgba(181,43,10,.15) !important; }
+  .kl-multiple-note { background: rgba(181,43,10,.05) !important; color: #b52b0a !important; border-color: rgba(181,43,10,.20) !important; }
+  .kl-item { border-color: rgba(181,43,10,.15) !important; }
+  .kl-badge-num {
+    background: rgba(181,43,10,.12) !important;
+    color: #b52b0a !important;
+    border-color: rgba(181,43,10,.30) !important;
+  }
+  .kl-badge-label { color: #b52b0a !important; }
+  .kl-body {
+    background: rgba(181,43,10,.03) !important;
+    color: #1a1814 !important;
+    border-top-color: rgba(181,43,10,.10) !important;
+  }
+
+  /* ── Decomposição do nome ── */
+  .breakdown-word  { color: #1a1814 !important; font-weight: 500; }
+  .bl-cell         { background: #faf8f2 !important; border-color: rgba(201,168,76,.15) !important; }
+  .bl-letter       { color: #1a1814 !important; }
+  .bl-vowel .bl-letter { color: #a08830 !important; }
+  .bl-consonant .bl-letter { color: #6b6458 !important; }
+  .bl-vowel .bl-value    { color: #c9a84c !important; }
+  .bl-consonant .bl-value { color: #a08830 !important; }
+  .breakdown-totals { border-top-color: rgba(201,168,76,.15) !important; }
+  .bt-vowel     { color: #c9a84c !important; background: rgba(201,168,76,.08) !important; border-color: rgba(201,168,76,.20) !important; }
+  .bt-consonant { color: #a08830 !important; background: rgba(201,168,76,.05) !important; border-color: rgba(201,168,76,.15) !important; }
+  .bt-total     { color: #1a1814 !important; background: rgba(201,168,76,.10) !important; border-color: rgba(201,168,76,.25) !important; }
+
+  /* ── Descrições de seção ── */
+  .section-desc { color: #6b6458 !important; }
+
+  /* ── Cycle reading body ── */
+  .cycle-reading-text   { color: #1a1814 !important; }
+  .cycle-transition-note { background: rgba(201,168,76,.08) !important; border-color: rgba(201,168,76,.25) !important; }
+  .cycle-transition-label { color: #c9a84c !important; }
+
+  /* ── Pinnacle reading body ── */
+  .pinnacle-reading-text { color: #1a1814 !important; }
+
+  /* Texto geral */
+  p, div, span { color: inherit; }
+  a { color: #a08830 !important; text-decoration: none !important; }
+
+} /* fim @media print */

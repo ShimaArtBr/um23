@@ -660,3 +660,47 @@ details[open] .essence-summary::before { content: '\u2212 '; }
   flex-shrink: 0; transition: color var(--t-fast) var(--ease);
 }
 .install-dismiss:hover { color: var(--text); }
+
+/* ═══════════════════════════════════════
+   BOTÃO GERAR PDF
+═══════════════════════════════════════ */
+.pdf-btn-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 28px 0 8px;
+}
+
+.pdf-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 28px;
+  background: transparent;
+  border: 1.5px solid rgba(201,168,76,.35);
+  border-radius: 6px;
+  color: var(--gold-dim);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease);
+}
+
+.pdf-btn:hover {
+  background: rgba(201,168,76,.10);
+  border-color: rgba(201,168,76,.65);
+  color: var(--gold);
+}
+
+.pdf-btn:active {
+  background: rgba(201,168,76,.18);
+}
+
+.pdf-btn-icon {
+  font-size: .75rem;
+  opacity: .75;
+}

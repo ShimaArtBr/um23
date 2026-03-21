@@ -12,6 +12,7 @@ import {
 } from './engine.js';
 
 import { renderResults, showSobre, hideSobre } from './render.js';
+import { gerarPDF } from './pdf.js';
 
 import { t } from './data/i18n.pt.js';
 
@@ -214,6 +215,7 @@ window.calculate   = calculate;
 window.showSobre   = showSobre;
 window.hideSobre   = hideSobre;
 window.toggleTheme = toggleTheme;
+window.gerarPDF    = gerarPDF;
 
 (function () {
   var savedTheme = null;
